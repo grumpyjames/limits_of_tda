@@ -10,11 +10,11 @@ public class BreadShopTest {
     public final JUnitRuleMockery mockery = new JUnitRuleMockery();
     private final OutboundEvents events = mockery.mock(OutboundEvents.class);
     private final BreadShop breadShop = new BreadShop(events);
-    private int idSequence = 0;
+
+    private final int accountId = 11;
 
     @Test
     public void create_an_account() {
-        int accountId = nextId();
         expectAccountCreationSuccess(accountId);
 
         breadShop.createAccount(accountId, "Geoff", "Smith");
@@ -22,7 +22,6 @@ public class BreadShopTest {
 
     @Test
     public void deposit_some_money() {
-        int accountId = nextId();
         createAccount(accountId, "Amanda", "Price");
 
         expectNewBalance(accountId, 300);
@@ -38,7 +37,6 @@ public class BreadShopTest {
 
     @Test
     public void deposits_add_up() {
-        int accountId = nextId();
         createAccountWithBalance(accountId, "Peter", "Parker", 300);
 
         expectNewBalance(accountId, 600);
@@ -47,7 +45,6 @@ public class BreadShopTest {
 
     @Test
     public void place_an_order_if_there_is_enough_money() {
-        int accountId = nextId();
         createAccountWithBalance(accountId, "Penelope", "Pitstop", 500);
 
         expectOrderPlaced(accountId, 40);
@@ -63,7 +60,6 @@ public class BreadShopTest {
 
     @Test
     public void cannot_place_an_order_for_more_than_account_can_afford() {
-        int accountId = nextId();
         createAccountWithBalance(accountId, "Dick", "Dastardly", 500);
 
         // 42 * 12 = 504
@@ -113,9 +109,5 @@ public class BreadShopTest {
         mockery.checking(new Expectations() {{
             oneOf(events).accountCreatedSuccessfully(accountId);
         }});
-    }
-
-    private int nextId() {
-        return idSequence++;
     }
 }
