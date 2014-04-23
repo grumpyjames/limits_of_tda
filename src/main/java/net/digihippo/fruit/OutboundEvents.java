@@ -10,4 +10,6 @@ public interface OutboundEvents {
     void orderPlaced(int accountId, int amount);
 
     void orderRejected(int accountId);
+
+    void orderCancelled(int accountId, int orderId);
 }

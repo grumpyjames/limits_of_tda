@@ -48,9 +48,7 @@ public class BreadShopTest {
     public void place_an_order_if_there_is_enough_money() {
         createAccountWithBalance(accountId, "Penelope", "Pitstop", 500);
 
-        expectOrderPlaced(accountId, 40);
-        expectNewBalance(accountId, 500 - (40 * BreadShop.PRICE_OF_BREAD));
-        breadShop.placeOrder(accountId, orderId, 40);
+        placeOrder(accountId, orderId, 40, 500);
     }
 
     @Test
@@ -66,6 +64,32 @@ public class BreadShopTest {
         // 42 * 12 = 504
         expectOrderRejected(accountId);
         breadShop.placeOrder(accountId, orderId, 42);
+    }
+
+    @Test
+    public void cancel_an_order_by_id() {
+        int balance = 500;
+        createAccountWithBalance(accountId, "Penelope", "Pitstop", balance);
+
+        int amount = 40;
+        placeOrder(accountId, orderId, amount, balance);
+
+        expectOrderCancelled(accountId, orderId);
+        expectNewBalance(accountId, balance);
+
+        breadShop.cancelOrder(accountId, orderId);
+    }
+
+    private void expectOrderCancelled(final int accountId, final int orderId) {
+        mockery.checking(new Expectations(){{
+            oneOf(events).orderCancelled(accountId, orderId);
+        }});
+    }
+
+    private void placeOrder(int accountId, int orderId, int amount, int balanceBefore) {
+        expectOrderPlaced(accountId, amount);
+        expectNewBalance(accountId, balanceBefore - (amount * BreadShop.PRICE_OF_BREAD));
+        breadShop.placeOrder(accountId, orderId, amount);
     }
 
     private void expectOrderRejected(final int accountId) {
