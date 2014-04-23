@@ -25,6 +25,5 @@ public class FruitStore {
         } else {
             events.accountNotFound(accountId);
         }
-
     }
 }
