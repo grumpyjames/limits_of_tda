@@ -29,7 +29,7 @@ public class BreadShop {
         }
     }
 
-    public void placeOrder(int accountId, int amount) {
+    public void placeOrder(int accountId, int orderId, int amount) {
         Integer balance = balances.get(accountId);
         if (balance != null) {
             int cost = amount * PRICE_OF_BREAD;

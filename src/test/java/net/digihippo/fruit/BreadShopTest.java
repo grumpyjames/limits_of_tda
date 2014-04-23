@@ -12,6 +12,7 @@ public class BreadShopTest {
     private final BreadShop breadShop = new BreadShop(events);
 
     private final int accountId = 11;
+    private final int orderId = 7;
 
     @Test
     public void create_an_account() {
@@ -49,13 +50,13 @@ public class BreadShopTest {
 
         expectOrderPlaced(accountId, 40);
         expectNewBalance(accountId, 500 - (40 * BreadShop.PRICE_OF_BREAD));
-        breadShop.placeOrder(accountId, 40);
+        breadShop.placeOrder(accountId, orderId, 40);
     }
 
     @Test
     public void cannot_place_order_for_nonexistent_account() {
         expectAccountNotFound(-5);
-        breadShop.placeOrder(-5, 40);
+        breadShop.placeOrder(-5, orderId, 40);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class BreadShopTest {
 
         // 42 * 12 = 504
         expectOrderRejected(accountId);
-        breadShop.placeOrder(accountId, 42);
+        breadShop.placeOrder(accountId, orderId, 42);
     }
 
     private void expectOrderRejected(final int accountId) {
