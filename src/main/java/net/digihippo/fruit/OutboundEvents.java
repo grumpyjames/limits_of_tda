@@ -6,4 +6,8 @@ public interface OutboundEvents {
     void newAccountBalance(int accountId, int newBalanceAmount);
 
     void accountNotFound(int accountId);
+
+    void orderPlaced(int accountId, int amount);
+
+    void orderRejected(int accountId);
 }
