@@ -80,6 +80,27 @@ public class BreadShopTest {
         breadShop.cancelOrder(accountId, orderId);
     }
 
+    @Test
+    public void cannot_cancel_an_order_for_nonexistent_account() {
+        expectAccountNotFound(-5);
+
+        breadShop.cancelOrder(-5, orderId);
+    }
+
+    @Test
+    public void cannot_cancel_a_nonexistent_order() {
+        createAccount(accountId, "Leona", "Latimer");
+
+        expectOrderNotFound(-5);
+        breadShop.cancelOrder(accountId, -5);
+    }
+
+    private void expectOrderNotFound(final int orderId) {
+        mockery.checking(new Expectations() {{
+            oneOf(events).orderNotFound(accountId, orderId);
+        }});
+    }
+
     private void expectOrderCancelled(final int accountId, final int orderId) {
         mockery.checking(new Expectations(){{
             oneOf(events).orderCancelled(accountId, orderId);
@@ -112,8 +133,7 @@ public class BreadShopTest {
     }
 
     private void expectAccountNotFound(final int accountId) {
-        mockery.checking(new Expectations()
-        {{
+        mockery.checking(new Expectations() {{
             oneOf(events).accountNotFound(accountId);
         }});
     }

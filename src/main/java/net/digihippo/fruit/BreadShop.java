@@ -47,9 +47,20 @@ public class BreadShop {
 
     public void cancelOrder(int accountId, int orderId) {
         Account account = accounts.get(accountId);
-        Integer orderQuantity = account.cancelOrder(orderId);
+        if (account == null)
+        {
+            events.accountNotFound(accountId);
+            return;
+        }
 
-        int newBalance = account.deposit(orderQuantity * PRICE_OF_BREAD);
+        Integer cancelledQuantity = account.cancelOrder(orderId);
+        if (cancelledQuantity == null)
+        {
+            events.orderNotFound(accountId, orderId);
+            return;
+        }
+
+        int newBalance = account.deposit(cancelledQuantity * PRICE_OF_BREAD);
         events.orderCancelled(accountId, orderId);
         events.newAccountBalance(accountId, newBalance);
     }
