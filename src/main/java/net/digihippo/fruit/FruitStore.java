@@ -19,7 +19,9 @@ public class FruitStore {
     public void deposit(int accountId, int creditAmount) {
         Integer balance = balances.get(accountId);
         if (balance != null) {
-            events.newAccountBalance(accountId, creditAmount);
+            int newBalance = creditAmount + balance;
+            balances.put(accountId, newBalance);
+            events.newAccountBalance(accountId, newBalance);
         } else {
             events.accountNotFound(accountId);
         }

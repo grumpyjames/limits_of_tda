@@ -36,6 +36,18 @@ public class FruitStoreTest {
         fruitStore.deposit(-5, 4000);
     }
 
+    @Test
+    public void deposits_add_up() {
+        int accountId = nextId();
+        createAccount(accountId, "Peter", "Parker");
+
+        expectNewBalance(accountId, 300);
+        fruitStore.deposit(accountId, 300);
+
+        expectNewBalance(accountId, 600);
+        fruitStore.deposit(accountId, 300);
+    }
+
     private void expectAccountNotFound(final int accountId) {
         mockery.checking(new Expectations()
         {{
