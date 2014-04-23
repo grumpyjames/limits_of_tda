@@ -5,11 +5,11 @@ import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class FruitStoreTest {
+public class BreadShopTest {
     @Rule
     public final JUnitRuleMockery mockery = new JUnitRuleMockery();
     private final OutboundEvents events = mockery.mock(OutboundEvents.class);
-    private final FruitStore fruitStore = new FruitStore(events);
+    private final BreadShop breadShop = new BreadShop(events);
     private int idSequence = 0;
 
     @Test
@@ -17,7 +17,7 @@ public class FruitStoreTest {
         int accountId = nextId();
         expectAccountCreationSuccess(accountId);
 
-        fruitStore.createAccount(accountId, "Geoff", "Smith");
+        breadShop.createAccount(accountId, "Geoff", "Smith");
     }
 
     @Test
@@ -26,14 +26,14 @@ public class FruitStoreTest {
         createAccount(accountId, "Amanda", "Price");
 
         expectNewBalance(accountId, 300);
-        fruitStore.deposit(accountId, 300);
+        breadShop.deposit(accountId, 300);
     }
 
     @Test
     public void reject_deposits_for_nonexistent_accounts() {
         expectAccountNotFound(-5);
 
-        fruitStore.deposit(-5, 4000);
+        breadShop.deposit(-5, 4000);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class FruitStoreTest {
         createAccountWithBalance(accountId, "Peter", "Parker", 300);
 
         expectNewBalance(accountId, 600);
-        fruitStore.deposit(accountId, 300);
+        breadShop.deposit(accountId, 300);
     }
 
     @Test
@@ -51,14 +51,14 @@ public class FruitStoreTest {
         createAccountWithBalance(accountId, "Penelope", "Pitstop", 500);
 
         expectOrderPlaced(accountId, 40);
-        expectNewBalance(accountId, 500 - (40 * FruitStore.PRICE_PER_FRUIT));
-        fruitStore.placeOrder(accountId, 40);
+        expectNewBalance(accountId, 500 - (40 * BreadShop.PRICE_OF_BREAD));
+        breadShop.placeOrder(accountId, 40);
     }
 
     @Test
     public void cannot_place_order_for_nonexistent_account() {
         expectAccountNotFound(-5);
-        fruitStore.placeOrder(-5, 40);
+        breadShop.placeOrder(-5, 40);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class FruitStoreTest {
 
         // 42 * 12 = 504
         expectOrderRejected(accountId);
-        fruitStore.placeOrder(accountId, 42);
+        breadShop.placeOrder(accountId, 42);
     }
 
     private void expectOrderRejected(final int accountId) {
@@ -87,7 +87,7 @@ public class FruitStoreTest {
         createAccount(accountId, forename, surname);
 
         expectNewBalance(accountId, initialBalance);
-        fruitStore.deposit(accountId, initialBalance);
+        breadShop.deposit(accountId, initialBalance);
     }
 
     private void expectAccountNotFound(final int accountId) {
@@ -100,7 +100,7 @@ public class FruitStoreTest {
     private void createAccount(int accountId, String forename, String surname) {
         expectAccountCreationSuccess(accountId);
 
-        fruitStore.createAccount(accountId, forename, surname);
+        breadShop.createAccount(accountId, forename, surname);
     }
 
     private void expectNewBalance(final int accountId, final int newBalanceAmount) {

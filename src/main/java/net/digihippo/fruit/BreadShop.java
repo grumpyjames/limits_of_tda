@@ -3,13 +3,13 @@ package net.digihippo.fruit;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FruitStore {
-    public static int PRICE_PER_FRUIT = 12;
+public class BreadShop {
+    public static int PRICE_OF_BREAD = 12;
 
     private final OutboundEvents events;
     private final Map<Integer, Integer> balances = new HashMap<Integer, Integer>();
 
-    public FruitStore(OutboundEvents events) {
+    public BreadShop(OutboundEvents events) {
         this.events = events;
     }
 
@@ -32,7 +32,7 @@ public class FruitStore {
     public void placeOrder(int accountId, int amount) {
         Integer balance = balances.get(accountId);
         if (balance != null) {
-            int cost = amount * PRICE_PER_FRUIT;
+            int cost = amount * PRICE_OF_BREAD;
             if (balance > cost) {
                 events.orderPlaced(accountId, amount);
                 deposit(accountId, -cost);
