@@ -1,25 +1,23 @@
 package net.digihippo.fruit;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class BreadShop {
     public static int PRICE_OF_BREAD = 12;
 
     private final OutboundEvents events;
-    private final Map<Integer, Account> accounts = new HashMap<Integer, Account>();
+    private final AccountRepository accountRepository = new AccountRepository();
 
     public BreadShop(OutboundEvents events) {
         this.events = events;
     }
 
     public void createAccount(int id, String forename, String surname) {
-        accounts.put(id, new Account(id, forename, surname));
+        Account newAccount = new Account(id, forename, surname);
+        accountRepository.addAccount(id, newAccount);
         events.accountCreatedSuccessfully(id);
     }
 
     public void deposit(int accountId, int creditAmount) {
-        Account account = accounts.get(accountId);
+        Account account = accountRepository.getAccount(accountId);
         if (account != null) {
             final int newBalance = account.deposit(creditAmount);
             events.newAccountBalance(accountId, newBalance);
@@ -29,7 +27,7 @@ public class BreadShop {
     }
 
     public void placeOrder(int accountId, int orderId, int amount) {
-        Account account = accounts.get(accountId);
+        Account account = accountRepository.getAccount(accountId);
         if (account != null) {
             int cost = amount * PRICE_OF_BREAD;
             if (account.getBalance() > cost) {
@@ -46,7 +44,7 @@ public class BreadShop {
     }
 
     public void cancelOrder(int accountId, int orderId) {
-        Account account = accounts.get(accountId);
+        Account account = accountRepository.getAccount(accountId);
         if (account == null)
         {
             events.accountNotFound(accountId);
