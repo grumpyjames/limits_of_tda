@@ -1,4 +1,4 @@
-package net.digihippo.fruit;
+package net.digihippo.bread;
 
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;

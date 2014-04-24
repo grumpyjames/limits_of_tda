@@ -1,4 +1,4 @@
-package net.digihippo.fruit;
+package net.digihippo.bread;
 
 import java.util.HashMap;
 import java.util.Map;

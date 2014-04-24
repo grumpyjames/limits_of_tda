@@ -1,4 +1,4 @@
-package net.digihippo.fruit;
+package net.digihippo.bread;
 
 public class BreadShop {
     public static int PRICE_OF_BREAD = 12;

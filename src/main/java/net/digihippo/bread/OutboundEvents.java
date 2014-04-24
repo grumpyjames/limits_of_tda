@@ -1,4 +1,4 @@
-package net.digihippo.fruit;
+package net.digihippo.bread;
 
 public interface OutboundEvents {
     void accountCreatedSuccessfully(int accountId);
