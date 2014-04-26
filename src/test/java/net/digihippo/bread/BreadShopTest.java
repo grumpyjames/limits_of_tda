@@ -95,6 +95,26 @@ public class BreadShopTest {
         breadShop.cancelOrder(accountId, -5);
     }
 
+    @Test
+    public void cancelling_an_allows_balance_to_be_reused() {
+        int balance = 500;
+        createAccountWithBalance(accountId, "Penelope", "Pitstop", balance);
+
+        int amount = 40;
+        placeOrder(accountId, orderId, amount, balance);
+
+        cancelOrder(accountId, orderId, balance);
+
+        placeOrder(accountId, orderId, amount, balance);
+    }
+
+    private void cancelOrder(int accountId, int orderId, int expectedBalanceAfterCancel) {
+        expectOrderCancelled(accountId, orderId);
+        expectNewBalance(accountId, expectedBalanceAfterCancel);
+
+        breadShop.cancelOrder(accountId, this.orderId);
+    }
+
     private void expectOrderNotFound(final int orderId) {
         mockery.checking(new Expectations() {{
             oneOf(events).orderNotFound(accountId, orderId);
