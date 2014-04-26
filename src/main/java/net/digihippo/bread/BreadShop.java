@@ -10,8 +10,8 @@ public class BreadShop {
         this.events = events;
     }
 
-    public void createAccount(int id, String forename, String surname) {
-        Account newAccount = new Account(id, forename, surname);
+    public void createAccount(int id, String accountName) {
+        Account newAccount = new Account(accountName);
         accountRepository.addAccount(id, newAccount);
         events.accountCreatedSuccessfully(id);
     }

@@ -4,17 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Account {
-    private final int id;
-    private final String forename;
-    private final String surname;
+    private final String accountName;
 
     private int balance = 0;
     private final Map<Integer, Integer> orders = new HashMap<Integer, Integer>();
 
-    public Account(int id, String forename, String surname) {
-        this.id = id;
-        this.forename = forename;
-        this.surname = surname;
+    public Account(String accountName) {
+        this.accountName = accountName;
     }
 
     public int getBalance() {

@@ -18,12 +18,12 @@ public class BreadShopTest {
     public void create_an_account() {
         expectAccountCreationSuccess(accountId);
 
-        breadShop.createAccount(accountId, "Geoff", "Smith");
+        breadShop.createAccount(accountId, "Geoff Smith");
     }
 
     @Test
     public void deposit_some_money() {
-        createAccount(accountId, "Amanda", "Price");
+        createAccount(accountId, "Amanda Price");
 
         expectNewBalance(accountId, 300);
         breadShop.deposit(accountId, 300);
@@ -38,17 +38,19 @@ public class BreadShopTest {
 
     @Test
     public void deposits_add_up() {
-        createAccountWithBalance(accountId, "Peter", "Parker", 300);
+        createAccountWithBalance(accountId, "Peter Parker", 300);
 
         expectNewBalance(accountId, 600);
         breadShop.deposit(accountId, 300);
     }
 
     @Test
-    public void place_an_order_if_there_is_enough_money() {
-        createAccountWithBalance(accountId, "Penelope", "Pitstop", 500);
+    public void place_an_order_succeeds_if_there_is_enough_money() {
+        createAccountWithBalance(accountId, "Penelope Pitstop", 500);
 
-        placeOrder(accountId, orderId, 40, 500);
+        expectOrderPlaced(accountId, 40);
+        expectNewBalance(accountId, 500 - (40 * BreadShop.PRICE_OF_BREAD));
+        breadShop.placeOrder(accountId, orderId, 40);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class BreadShopTest {
 
     @Test
     public void cannot_place_an_order_for_more_than_account_can_afford() {
-        createAccountWithBalance(accountId, "Dick", "Dastardly", 500);
+        createAccountWithBalance(accountId, "Dick Dastardly", 500);
 
         // 42 * 12 = 504
         expectOrderRejected(accountId);
@@ -69,7 +71,7 @@ public class BreadShopTest {
     @Test
     public void cancel_an_order_by_id() {
         int balance = 500;
-        createAccountWithBalance(accountId, "Penelope", "Pitstop", balance);
+        createAccountWithBalance(accountId, "Penelope Pitstop", balance);
 
         int amount = 40;
         placeOrder(accountId, orderId, amount, balance);
@@ -89,7 +91,7 @@ public class BreadShopTest {
 
     @Test
     public void cannot_cancel_a_nonexistent_order() {
-        createAccount(accountId, "Leona", "Latimer");
+        createAccount(accountId, "Leona Latimer");
 
         expectOrderNotFound(-5);
         breadShop.cancelOrder(accountId, -5);
@@ -98,7 +100,7 @@ public class BreadShopTest {
     @Test
     public void cancelling_an_allows_balance_to_be_reused() {
         int balance = 500;
-        createAccountWithBalance(accountId, "Penelope", "Pitstop", balance);
+        createAccountWithBalance(accountId, "Penelope Pitstop", balance);
 
         int amount = 40;
         placeOrder(accountId, orderId, amount, balance);
@@ -145,8 +147,8 @@ public class BreadShopTest {
         }});
     }
 
-    private void createAccountWithBalance(int accountId, String forename, String surname, int initialBalance) {
-        createAccount(accountId, forename, surname);
+    private void createAccountWithBalance(int accountId, String accountName, int initialBalance) {
+        createAccount(accountId, accountName);
 
         expectNewBalance(accountId, initialBalance);
         breadShop.deposit(accountId, initialBalance);
@@ -158,10 +160,10 @@ public class BreadShopTest {
         }});
     }
 
-    private void createAccount(int accountId, String forename, String surname) {
+    private void createAccount(int accountId, String accountName) {
         expectAccountCreationSuccess(accountId);
 
-        breadShop.createAccount(accountId, forename, surname);
+        breadShop.createAccount(accountId, accountName);
     }
 
     private void expectNewBalance(final int accountId, final int newBalanceAmount) {
