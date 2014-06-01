@@ -45,22 +45,24 @@ While we shouldn't pass things like `List` and `Map` between our objects, it's t
 
 It's also completely OK to pass non-primitive objects around, but all of their public methods must obey TDA.
 
-## Objective 2 : We can bake it for you wholesale
+Once you're done here, it's very much a choose your own adventure kind of thing.
+
+## Objective Z
+
+You might have a good idea of a story that would be hard to express within the TDA rules. Perhaps have a go at implementing it, if so.
+
+## Objective A : We can bake it for you wholesale
 
 Add a function to the `BreadShop` that behaves as follows:
 
 * Takes no arguments
-* Calls a new `placeWholesaleOrder` on `OutboundEvents` with an integer amount that is equal to the `sum` of all the orders in all of the known accounts
+* Calls a new `placeWholesaleOrder` on `OutboundEvents` with an integer amount that is equal to the `sum` of the quantities of the orders in all of the known accounts
 
 Remember to stay within the rules of TDA!
 
-## Objective 3 : Choose your own adventure.
+## Objective B : A wholesale order arrives
 
-At this point, you might have a good idea of a story that would be hard to express within the TDA rules. Perhaps have a go at implementing it, if so.
-
-If nothing immediately occurs to you, try one of the following requirements:
-
-a.) The bread arrives
+This can be attempted separately from objective A.
 
 Add a function to the `BreadShop` named `onWholesaleOrder`. This would be called when the wholesale order arrives. It takes a single argument - the size of the wholesale order.
 
@@ -70,4 +72,6 @@ It should:
 * For each order that is filled, a call to a new OutboundEvents function `onOrderFilled(int accountId, int orderId, int amount)` should be made
 * Filled orders should be removed from the system (so if another wholesale order arrived, they won't get filled twice)
 
-It is perfectly valid for orders to be placed or cancelled between a call to `placeBatchOrder` and `onWholesaleOrder`. Dealing with this is outside of the scope of this story, but if you've time to spare, why not have a go?
+It is perfectly valid for a wholesale order to arrive that does not fill every extant order completely, or, conversely, contains more bread than is required.
+
+Attempting to fairly allocate the bread is outside of the scope of this task; in order to test it, however, allocation will need to be _consistent_.
