@@ -104,10 +104,14 @@ public class BreadShopTest {
 
         int amount = 40;
         placeOrder(accountId, orderId, amount, balance);
-
         cancelOrder(accountId, orderId, balance);
 
-        placeOrder(accountId, orderId, amount, balance);
+        // it's entirely possible that the balance event doesn't match the internal
+        // state of the system, so we ensure the balance has really been restored
+        // by trying to place a new order with it.
+        expectOrderPlaced(accountId, amount);
+        expectNewBalance(accountId, balance - (amount * BreadShop.PRICE_OF_BREAD));
+        breadShop.placeOrder(accountId, orderId, amount);
     }
 
     private void cancelOrder(int accountId, int orderId, int expectedBalanceAfterCancel) {
