@@ -2,6 +2,7 @@ package net.digihippo.bread;
 
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -114,6 +115,24 @@ public class BreadShopTest {
         breadShop.placeOrder(accountId, orderId, amount);
     }
 
+    @Test
+    @Ignore("Objective A")
+    public void an_empty_shop_places_an_empty_wholesale_order() {
+        expectWholesaleOrder(0);
+
+        breadShop.placeWholesaleOrder();
+    }
+
+    @Test
+    @Ignore("Objective A")
+    public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
+        expectWholesaleOrder(40 + 55 + 61);
+
+        createAccountAndPlaceOrder(accountId, 40);
+        createAccountAndPlaceOrder(accountId + 1, 55);
+        createAccountAndPlaceOrder(accountId + 2, 61);
+    }
+
     private void cancelOrder(int accountId, int orderId, int expectedBalanceAfterCancel) {
         expectOrderCancelled(accountId, orderId);
         expectNewBalance(accountId, expectedBalanceAfterCancel);
@@ -179,6 +198,18 @@ public class BreadShopTest {
     private void expectAccountCreationSuccess(final int accountId) {
         mockery.checking(new Expectations() {{
             oneOf(events).accountCreatedSuccessfully(accountId);
+        }});
+    }
+
+    private void createAccountAndPlaceOrder(int accountId, int amount) {
+        int balance = 40 * BreadShop.PRICE_OF_BREAD;
+        createAccountWithBalance(accountId, "Penelope Pitstop", balance);
+        placeOrder(accountId, orderId, amount, balance);
+    }
+
+    private void expectWholesaleOrder(final int quantity) {
+        mockery.checking(new Expectations() {{
+            oneOf(events).onWholesaleOrder(quantity);
         }});
     }
 }

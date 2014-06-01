@@ -62,4 +62,8 @@ public class BreadShop {
         events.orderCancelled(accountId, orderId);
         events.newAccountBalance(accountId, newBalance);
     }
+
+    public void placeWholesaleOrder() {
+        throw new UnsupportedOperationException("Implement me in Objective A");
+    }
 }

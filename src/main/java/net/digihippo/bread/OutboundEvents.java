@@ -14,4 +14,7 @@ public interface OutboundEvents {
     void orderCancelled(int accountId, int orderId);
 
     void orderNotFound(int accountId, int orderId);
+
+    // For Objective A
+    void onWholesaleOrder(int quantity);
 }
