@@ -12,23 +12,25 @@ public class BreadShopTest {
     private final OutboundEvents events = mockery.mock(OutboundEvents.class);
     private final BreadShop breadShop = new BreadShop(events);
 
-    private final int accountId = 11;
-    private final int orderId = 7;
+    private final int accountIdOne = 1;
+    private final int accountIdTwo = 2;
+    private final int orderIdOne = 1;
+    private final int orderIdTwo = 2;
 
     @Test
     public void create_an_account() {
-        expectAccountCreationSuccess(accountId);
+        expectAccountCreationSuccess(accountIdOne);
 
-        breadShop.createAccount(accountId);
+        breadShop.createAccount(accountIdOne);
     }
 
     @Test
     public void deposit_some_money() {
-        createAccount(accountId);
+        createAccount(accountIdOne);
 
         int depositAmount = 300;
-        expectNewBalance(accountId, depositAmount);
-        breadShop.deposit(accountId, depositAmount);
+        expectNewBalance(accountIdOne, depositAmount);
+        breadShop.deposit(accountIdOne, depositAmount);
     }
 
     @Test
@@ -41,80 +43,80 @@ public class BreadShopTest {
 
     @Test
     public void deposits_add_up() {
-        createAccountWithBalance(accountId, 300);
+        createAccountWithBalance(accountIdOne, 300);
 
-        expectNewBalance(accountId, 600);
-        breadShop.deposit(accountId, 300);
+        expectNewBalance(accountIdOne, 600);
+        breadShop.deposit(accountIdOne, 300);
     }
 
     @Test
     public void place_an_order_succeeds_if_there_is_enough_money() {
-        createAccountWithBalance(accountId, 500);
+        createAccountWithBalance(accountIdOne, 500);
 
-        expectOrderPlaced(accountId, 40);
-        expectNewBalance(accountId, 500 - (40 * BreadShop.PRICE_OF_BREAD));
-        breadShop.placeOrder(accountId, orderId, 40);
+        expectOrderPlaced(accountIdOne, 40);
+        expectNewBalance(accountIdOne, 500 - (cost(40)));
+        breadShop.placeOrder(accountIdOne, orderIdOne, 40);
     }
 
     @Test
     public void cannot_place_order_for_nonexistent_account() {
         expectAccountNotFound(-5);
-        breadShop.placeOrder(-5, orderId, 40);
+        breadShop.placeOrder(-5, orderIdOne, 40);
     }
 
     @Test
     public void cannot_place_an_order_for_more_than_account_can_afford() {
-        createAccountWithBalance(accountId, 500);
+        createAccountWithBalance(accountIdOne, 500);
 
         // 42 * 12 = 504
-        expectOrderRejected(accountId);
-        breadShop.placeOrder(accountId, orderId, 42);
+        expectOrderRejected(accountIdOne);
+        breadShop.placeOrder(accountIdOne, orderIdOne, 42);
     }
 
     @Test
     public void cancel_an_order_by_id() {
         int balance = 500;
-        createAccountWithBalance(accountId, balance);
+        createAccountWithBalance(accountIdOne, balance);
 
         int amount = 40;
-        placeOrder(accountId, orderId, amount, balance);
+        placeOrder(accountIdOne, orderIdOne, amount, balance);
 
-        expectOrderCancelled(accountId, orderId);
-        expectNewBalance(accountId, balance);
+        expectOrderCancelled(accountIdOne, orderIdOne);
+        expectNewBalance(accountIdOne, balance);
 
-        breadShop.cancelOrder(accountId, orderId);
+        breadShop.cancelOrder(accountIdOne, orderIdOne);
     }
 
     @Test
     public void cannot_cancel_an_order_for_nonexistent_account() {
         expectAccountNotFound(-5);
 
-        breadShop.cancelOrder(-5, orderId);
+        breadShop.cancelOrder(-5, orderIdOne);
     }
 
     @Test
     public void cannot_cancel_a_nonexistent_order() {
-        createAccount(accountId);
+        createAccount(accountIdOne);
 
         expectOrderNotFound(-5);
-        breadShop.cancelOrder(accountId, -5);
+        breadShop.cancelOrder(accountIdOne, -5);
     }
 
     @Test
     public void cancelling_an_allows_balance_to_be_reused() {
         int balance = 500;
-        createAccountWithBalance(accountId, balance);
+        createAccountWithBalance(accountIdOne, balance);
 
         int amount = 40;
-        placeOrder(accountId, orderId, amount, balance);
-        cancelOrder(accountId, orderId, balance);
+        placeOrder(accountIdOne, orderIdOne, amount, balance);
+        cancelOrder(accountIdOne, orderIdOne, balance);
 
         // it's entirely possible that the balance in the resulting event doesn't match the internal
         // state of the system, so we ensure the balance has really been restored
         // by trying to place a new order with it.
-        expectOrderPlaced(accountId, amount);
-        expectNewBalance(accountId, balance - (amount * BreadShop.PRICE_OF_BREAD));
-        breadShop.placeOrder(accountId, orderId, amount);
+        expectOrderPlaced(accountIdOne, amount);
+        expectNewBalance(accountIdOne, balance - (cost(amount)));
+        breadShop.placeOrder(accountIdOne, orderIdTwo, amount);
     }
 
     @Test
@@ -128,20 +130,21 @@ public class BreadShopTest {
     @Test
     @Ignore("Objective A")
     public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
-        expectWholesaleOrder(40 + 55 + 61);
+        expectWholesaleOrder(40 + 55);
 
-        createAccountAndPlaceOrder(accountId, orderId, 40);
-        createAccountAndPlaceOrder(accountId + 1, orderId, 55);
-        createAccountAndPlaceOrder(accountId + 2, orderId, 61);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, 40);
+        createAccountAndPlaceOrder(accountIdTwo, orderIdTwo, 55);
+
+        breadShop.placeWholesaleOrder();
     }
 
     @Test
     @Ignore("Objective B")
     public void arrival_of_wholesale_order_trigger_fills_of_a_single_outstanding_order() {
         int quantity = 40;
-        createAccountAndPlaceOrder(accountId, orderId, quantity);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
-        expectOrderFilled(accountId, orderId, quantity);
+        expectOrderFilled(accountIdOne, orderIdOne, quantity);
         breadShop.onWholesaleOrder(quantity);
     }
 
@@ -149,10 +152,10 @@ public class BreadShopTest {
     @Ignore("Objective B")
     public void wholesale_order_quantities_might_only_fill_an_outstanding_order_partially() {
         int quantity = 40;
-        createAccountAndPlaceOrder(accountId, orderId, quantity);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
         int wholesaleOrderQuantity = quantity / 2;
-        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        expectOrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity);
         breadShop.onWholesaleOrder(wholesaleOrderQuantity);
     }
 
@@ -160,13 +163,13 @@ public class BreadShopTest {
     @Ignore("Objective B")
     public void an_order_can_be_filled_by_two_consecutive_wholesale_orders() {
         int quantity = 40;
-        createAccountAndPlaceOrder(accountId, orderId, quantity);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
         int wholesaleOrderQuantity = quantity / 2;
-        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        expectOrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity);
         breadShop.onWholesaleOrder(wholesaleOrderQuantity);
 
-        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        expectOrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity);
         breadShop.onWholesaleOrder(wholesaleOrderQuantity);
     }
 
@@ -175,9 +178,9 @@ public class BreadShopTest {
     public void orders_do_not_overfill() {
         int quantity = 40;
         int wholesaleOrderQuantity = 42;
-        createAccountAndPlaceOrder(accountId, orderId, quantity);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
-        expectOrderFilled(accountId, orderId, quantity);
+        expectOrderFilled(accountIdOne, orderIdOne, quantity);
         breadShop.onWholesaleOrder(wholesaleOrderQuantity);
     }
 
@@ -185,14 +188,12 @@ public class BreadShopTest {
     @Ignore("Objective B")
     public void orders_across_different_accounts_are_filled() {
         int quantityOne = 40;
-        int accountIdOne = accountId;
         int quantityTwo = 55;
-        int accountIdTwo = accountId + 1;
-        createAccountAndPlaceOrder(accountIdOne, orderId, quantityOne);
-        createAccountAndPlaceOrder(accountIdTwo, orderId, quantityTwo);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantityOne);
+        createAccountAndPlaceOrder(accountIdTwo, orderIdTwo, quantityTwo);
 
-        expectOrderFilled(accountIdOne, orderId, quantityOne);
-        expectOrderFilled(accountIdTwo, orderId, quantityTwo);
+        expectOrderFilled(accountIdOne, orderIdOne, quantityOne);
+        expectOrderFilled(accountIdTwo, orderIdTwo, quantityTwo);
 
         breadShop.onWholesaleOrder(quantityOne + quantityTwo);
     }
@@ -201,15 +202,13 @@ public class BreadShopTest {
     @Ignore("Objective B")
     public void orders_fill_in_a_consistent_order_across_different_accounts() {
         int quantityOne = 40;
-        int accountIdOne = accountId;
         int quantityTwo = 55;
-        int accountIdTwo = accountId + 1;
-        createAccountAndPlaceOrder(accountIdOne, orderId, quantityOne);
-        createAccountAndPlaceOrder(accountIdTwo, orderId, quantityTwo);
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantityOne);
+        createAccountAndPlaceOrder(accountIdTwo, orderIdTwo, quantityTwo);
 
-        expectOrderFilled(accountIdOne, orderId, quantityOne);
+        expectOrderFilled(accountIdOne, orderIdOne, quantityOne);
         int secondFillQuantity = 8;
-        expectOrderFilled(accountIdTwo, orderId, secondFillQuantity);
+        expectOrderFilled(accountIdTwo, orderIdTwo, secondFillQuantity);
 
         breadShop.onWholesaleOrder(quantityOne + secondFillQuantity);
     }
@@ -218,17 +217,21 @@ public class BreadShopTest {
     @Ignore("Objective B")
     public void orders_fill_in_a_consistent_order_across_orders_in_the_same_account() {
         int quantityOne = 40;
-        int accountIdOne = accountId;
-        int balance = 40 * 2 * BreadShop.PRICE_OF_BREAD;
+        int quantityTwo = 50;
+        int balance = cost(quantityOne) + cost(quantityTwo);
         createAccountWithBalance(accountIdOne, balance);
-        placeOrder(accountIdOne, orderId, quantityOne, balance);
-        placeOrder(accountIdOne, orderId + 1, quantityOne, balance / 2);
+        placeOrder(accountIdOne, orderIdOne, quantityOne, balance);
+        placeOrder(accountIdOne, orderIdTwo, quantityTwo, balance - cost(quantityOne));
 
-        expectOrderFilled(accountIdOne, orderId, quantityOne);
+        expectOrderFilled(accountIdOne, orderIdOne, quantityOne);
         int secondFillQuantity = 8;
-        expectOrderFilled(accountIdOne, orderId + 1, secondFillQuantity);
+        expectOrderFilled(accountIdOne, orderIdTwo, secondFillQuantity);
 
         breadShop.onWholesaleOrder(quantityOne + secondFillQuantity);
+    }
+
+    private int cost(int quantityOne) {
+        return quantityOne * BreadShop.PRICE_OF_BREAD;
     }
 
     private void expectOrderFilled(final int accountId, final int orderId, final int quantity) {
@@ -241,12 +244,12 @@ public class BreadShopTest {
         expectOrderCancelled(accountId, orderId);
         expectNewBalance(accountId, expectedBalanceAfterCancel);
 
-        breadShop.cancelOrder(accountId, this.orderId);
+        breadShop.cancelOrder(accountId, this.orderIdOne);
     }
 
     private void expectOrderNotFound(final int orderId) {
         mockery.checking(new Expectations() {{
-            oneOf(events).orderNotFound(accountId, orderId);
+            oneOf(events).orderNotFound(accountIdOne, orderId);
         }});
     }
 
@@ -258,7 +261,7 @@ public class BreadShopTest {
 
     private void placeOrder(int accountId, int orderId, int amount, int balanceBefore) {
         expectOrderPlaced(accountId, amount);
-        expectNewBalance(accountId, balanceBefore - (amount * BreadShop.PRICE_OF_BREAD));
+        expectNewBalance(accountId, balanceBefore - (cost(amount)));
         breadShop.placeOrder(accountId, orderId, amount);
     }
 
@@ -306,7 +309,7 @@ public class BreadShopTest {
     }
 
     private void createAccountAndPlaceOrder(int accountId, int orderId, int amount) {
-        int balance = 40 * BreadShop.PRICE_OF_BREAD;
+        int balance = cost(40);
         createAccountWithBalance(accountId, balance);
         placeOrder(accountId, orderId, amount, balance);
     }
