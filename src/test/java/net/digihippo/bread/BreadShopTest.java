@@ -197,6 +197,21 @@ public class BreadShopTest {
 
     @Test
     @Ignore("Objective B")
+    public void orders_do_not_overfill_across_two_wholesale_orders() {
+        int quantity = 40;
+        int wholesaleOrderQuantityOne = 21;
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
+
+        expectOrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantityOne);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantityOne);
+
+        int wholesaleOrderQuantityTwo = 33; // This will fill the remaining quantity
+        expectOrderFilled(accountIdOne, orderIdOne, quantity - wholesaleOrderQuantityOne);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantityTwo);
+    }
+
+    @Test
+    @Ignore("Objective B")
     public void orders_across_different_accounts_are_filled() {
         int quantityOne = 40;
         int quantityTwo = 55;
