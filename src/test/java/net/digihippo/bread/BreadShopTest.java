@@ -26,15 +26,17 @@ public class BreadShopTest {
     public void deposit_some_money() {
         createAccount(accountId);
 
-        expectNewBalance(accountId, 300);
-        breadShop.deposit(accountId, 300);
+        int depositAmount = 300;
+        expectNewBalance(accountId, depositAmount);
+        breadShop.deposit(accountId, depositAmount);
     }
 
     @Test
     public void reject_deposits_for_nonexistent_accounts() {
-        expectAccountNotFound(-5);
+        int nonExistentAccountId = -5;
+        expectAccountNotFound(nonExistentAccountId);
 
-        breadShop.deposit(-5, 4000);
+        breadShop.deposit(nonExistentAccountId, 4000);
     }
 
     @Test
