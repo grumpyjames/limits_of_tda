@@ -66,4 +66,8 @@ public class BreadShop {
     public void placeWholesaleOrder() {
         throw new UnsupportedOperationException("Implement me in Objective A");
     }
+
+    public void onWholesaleOrder(int quantity) {
+        throw new UnsupportedOperationException("Implement me in Objective B");
+    }
 }

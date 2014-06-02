@@ -107,7 +107,7 @@ public class BreadShopTest {
         placeOrder(accountId, orderId, amount, balance);
         cancelOrder(accountId, orderId, balance);
 
-        // it's entirely possible that the balance event doesn't match the internal
+        // it's entirely possible that the balance in the resulting event doesn't match the internal
         // state of the system, so we ensure the balance has really been restored
         // by trying to place a new order with it.
         expectOrderPlaced(accountId, amount);
@@ -128,9 +128,111 @@ public class BreadShopTest {
     public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
         expectWholesaleOrder(40 + 55 + 61);
 
-        createAccountAndPlaceOrder(accountId, 40);
-        createAccountAndPlaceOrder(accountId + 1, 55);
-        createAccountAndPlaceOrder(accountId + 2, 61);
+        createAccountAndPlaceOrder(accountId, orderId, 40);
+        createAccountAndPlaceOrder(accountId + 1, orderId, 55);
+        createAccountAndPlaceOrder(accountId + 2, orderId, 61);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void arrival_of_wholesale_order_trigger_fills_of_a_single_outstanding_order() {
+        int quantity = 40;
+        createAccountAndPlaceOrder(accountId, orderId, quantity);
+
+        expectOrderFilled(accountId, orderId, quantity);
+        breadShop.onWholesaleOrder(quantity);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void wholesale_order_quantities_might_only_fill_an_outstanding_order_partially() {
+        int quantity = 40;
+        createAccountAndPlaceOrder(accountId, orderId, quantity);
+
+        int wholesaleOrderQuantity = quantity / 2;
+        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantity);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void an_order_can_be_filled_by_two_consecutive_wholesale_orders() {
+        int quantity = 40;
+        createAccountAndPlaceOrder(accountId, orderId, quantity);
+
+        int wholesaleOrderQuantity = quantity / 2;
+        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantity);
+
+        expectOrderFilled(accountId, orderId, wholesaleOrderQuantity);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantity);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void orders_do_not_overfill() {
+        int quantity = 40;
+        int wholesaleOrderQuantity = 42;
+        createAccountAndPlaceOrder(accountId, orderId, quantity);
+
+        expectOrderFilled(accountId, orderId, quantity);
+        breadShop.onWholesaleOrder(wholesaleOrderQuantity);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void orders_across_different_accounts_are_filled() {
+        int quantityOne = 40;
+        int accountIdOne = accountId;
+        int quantityTwo = 55;
+        int accountIdTwo = accountId + 1;
+        createAccountAndPlaceOrder(accountIdOne, orderId, quantityOne);
+        createAccountAndPlaceOrder(accountIdTwo, orderId, quantityTwo);
+
+        expectOrderFilled(accountIdOne, orderId, quantityOne);
+        expectOrderFilled(accountIdTwo, orderId, quantityTwo);
+
+        breadShop.onWholesaleOrder(quantityOne + quantityTwo);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void orders_fill_in_a_consistent_order_across_different_accounts() {
+        int quantityOne = 40;
+        int accountIdOne = accountId;
+        int quantityTwo = 55;
+        int accountIdTwo = accountId + 1;
+        createAccountAndPlaceOrder(accountIdOne, orderId, quantityOne);
+        createAccountAndPlaceOrder(accountIdTwo, orderId, quantityTwo);
+
+        expectOrderFilled(accountIdOne, orderId, quantityOne);
+        int secondFillQuantity = 8;
+        expectOrderFilled(accountIdTwo, orderId, secondFillQuantity);
+
+        breadShop.onWholesaleOrder(quantityOne + secondFillQuantity);
+    }
+
+    @Test
+    @Ignore("Objective B")
+    public void orders_fill_in_a_consistent_order_across_orders_in_the_same_account() {
+        int quantityOne = 40;
+        int accountIdOne = accountId;
+        int balance = 40 * 2 * BreadShop.PRICE_OF_BREAD;
+        createAccountWithBalance(accountIdOne, "Penelope Pitstop", balance);
+        placeOrder(accountIdOne, orderId, quantityOne, balance);
+        placeOrder(accountIdOne, orderId + 1, quantityOne, balance / 2);
+
+        expectOrderFilled(accountIdOne, orderId, quantityOne);
+        int secondFillQuantity = 8;
+        expectOrderFilled(accountIdOne, orderId + 1, secondFillQuantity);
+
+        breadShop.onWholesaleOrder(quantityOne + secondFillQuantity);
+    }
+
+    private void expectOrderFilled(final int accountId, final int orderId, final int quantity) {
+        mockery.checking(new Expectations() {{
+            oneOf(events).orderFilled(accountId, orderId, quantity);
+        }});
     }
 
     private void cancelOrder(int accountId, int orderId, int expectedBalanceAfterCancel) {
@@ -201,7 +303,7 @@ public class BreadShopTest {
         }});
     }
 
-    private void createAccountAndPlaceOrder(int accountId, int amount) {
+    private void createAccountAndPlaceOrder(int accountId, int orderId, int amount) {
         int balance = 40 * BreadShop.PRICE_OF_BREAD;
         createAccountWithBalance(accountId, "Penelope Pitstop", balance);
         placeOrder(accountId, orderId, amount, balance);

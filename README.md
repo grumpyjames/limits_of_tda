@@ -64,14 +64,16 @@ Remember to stay within the rules of TDA!
 
 This can be attempted separately from objective A.
 
-Add a function to the `BreadShop` named `onWholesaleOrder`. This would be called when the wholesale order arrives. It takes a single argument - the size of the wholesale order.
+This one is significantly trickier. You may wish to follow the spirit rather than the letter of the law (the letter would not allow you to pass non-TDA objects around; the spirit happily allows this so long as you don't attempt to use them to pass information back to the caller).
+
+Implement the `onWholesaleOrder` function on the `BreadShop`. This would be called when a wholesale order arrives. It takes a single argument - the quantity of bread that has arrived.
 
 It should:
 
 * Attempt to 'fill' as many orders as possible
 * For each order that is filled, a call to a new OutboundEvents function `onOrderFilled(int accountId, int orderId, int amount)` should be made
-* Filled orders should be removed from the system (so if another wholesale order arrived, they won't get filled twice)
+* Fully filled orders should be removed from the system (so if another wholesale order arrived, they won't get filled twice)
 
-It is perfectly valid for a wholesale order to arrive that does not fill every extant order completely, or, conversely, contains more bread than is required.
+It is perfectly valid for a wholesale order to arrive that does not fill every extant order completely, or, conversely, contains more bread than is required. In the former case,
 
 Attempting to fairly allocate the bread is outside of the scope of this task; in order to test it, however, allocation will need to be _consistent_.

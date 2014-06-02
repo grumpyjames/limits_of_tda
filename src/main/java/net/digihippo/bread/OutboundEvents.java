@@ -17,4 +17,7 @@ public interface OutboundEvents {
 
     // For Objective A
     void onWholesaleOrder(int quantity);
+
+    // For Objective B
+    void orderFilled(int accountId, int orderId, int quantity);
 }
