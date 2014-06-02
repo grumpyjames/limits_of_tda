@@ -23,4 +23,10 @@ public class Account {
     public Integer cancelOrder(int orderId) {
         return orders.remove(orderId);
     }
+
+    public void accumulateOrderQuantities(OrderQuantityAccumulator accumulator) {
+        for (Integer orderQuantity : orders.values()) {
+            accumulator.addOrderQuantity(orderQuantity);
+        }
+    }
 }

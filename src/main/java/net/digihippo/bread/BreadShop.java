@@ -30,7 +30,7 @@ public class BreadShop {
         Account account = accountRepository.getAccount(accountId);
         if (account != null) {
             int cost = amount * PRICE_OF_BREAD;
-            if (account.getBalance() > cost) {
+            if (account.getBalance() >= cost) {
                 account.addOrder(orderId, amount);
                 int newBalance = account.deposit(-cost);
                 events.orderPlaced(accountId, amount);
@@ -64,7 +64,9 @@ public class BreadShop {
     }
 
     public void placeWholesaleOrder() {
-        throw new UnsupportedOperationException("Implement me in Objective A");
+        final OrderQuantityAccumulator accumulator = new OrderQuantityAccumulator();
+        accountRepository.accumulateOrderQuantities(accumulator);
+        accumulator.placeWholesaleOrder(events);
     }
 
     public void onWholesaleOrder(int quantity) {

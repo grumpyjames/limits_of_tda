@@ -120,7 +120,6 @@ public class BreadShopTest {
     }
 
     @Test
-    @Ignore("Objective A")
     public void an_empty_shop_places_an_empty_wholesale_order() {
         expectWholesaleOrder(0);
 
@@ -128,7 +127,6 @@ public class BreadShopTest {
     }
 
     @Test
-    @Ignore("Objective A")
     public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
         expectWholesaleOrder(40 + 55);
 
@@ -309,7 +307,7 @@ public class BreadShopTest {
     }
 
     private void createAccountAndPlaceOrder(int accountId, int orderId, int amount) {
-        int balance = cost(40);
+        int balance = cost(amount);
         createAccountWithBalance(accountId, balance);
         placeOrder(accountId, orderId, amount, balance);
     }

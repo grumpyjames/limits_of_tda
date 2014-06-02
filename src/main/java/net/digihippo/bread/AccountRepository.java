@@ -16,4 +16,11 @@ public class AccountRepository {
     Account getAccount(int accountId) {
         return accounts.get(accountId);
     }
+
+    public void accumulateOrderQuantities(OrderQuantityAccumulator accumulator) {
+        for (Account account: accounts.values())
+        {
+            account.accumulateOrderQuantities(accumulator);
+        }
+    }
 }
