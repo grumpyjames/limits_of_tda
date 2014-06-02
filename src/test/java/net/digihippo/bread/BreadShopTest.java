@@ -129,11 +129,22 @@ public class BreadShopTest {
 
     @Test
     @Ignore("Objective A")
-    public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
+    public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_orders_across_accounts() {
         expectWholesaleOrder(40 + 55);
 
         createAccountAndPlaceOrder(accountIdOne, orderIdOne, 40);
         createAccountAndPlaceOrder(accountIdTwo, orderIdTwo, 55);
+
+        breadShop.placeWholesaleOrder();
+    }
+
+    @Test
+    @Ignore("Objective A")
+    public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_orders_in_the_same_account() {
+        expectWholesaleOrder(40 + 55);
+
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, 40);
+        createAccountAndPlaceOrder(accountIdOne, orderIdTwo, 55);
 
         breadShop.placeWholesaleOrder();
     }
@@ -309,7 +320,7 @@ public class BreadShopTest {
     }
 
     private void createAccountAndPlaceOrder(int accountId, int orderId, int amount) {
-        int balance = cost(40);
+        int balance = cost(amount);
         createAccountWithBalance(accountId, balance);
         placeOrder(accountId, orderId, amount, balance);
     }
