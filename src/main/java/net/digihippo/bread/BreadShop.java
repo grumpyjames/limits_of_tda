@@ -11,7 +11,7 @@ public class BreadShop {
     }
 
     public void createAccount(int id) {
-        Account newAccount = new Account();
+        Account newAccount = new Account(id);
         accountRepository.addAccount(id, newAccount);
         events.accountCreatedSuccessfully(id);
     }
@@ -70,6 +70,6 @@ public class BreadShop {
     }
 
     public void onWholesaleOrder(int quantity) {
-        throw new UnsupportedOperationException("Implement me in Objective B");
+        accountRepository.onWholesaleOrder(quantity, events);
     }
 }

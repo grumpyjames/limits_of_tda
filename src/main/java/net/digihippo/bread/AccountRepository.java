@@ -18,9 +18,12 @@ public class AccountRepository {
     }
 
     public void accumulateOrderQuantities(OrderQuantityAccumulator accumulator) {
-        for (Account account: accounts.values())
-        {
+        for (Account account: accounts.values()) {
             account.accumulateOrderQuantities(accumulator);
         }
+    }
+
+    public void onWholesaleOrder(int quantity, OutboundEvents events) {
+        Account.fillNextAccount(events, accounts.values().iterator(), quantity);
     }
 }
