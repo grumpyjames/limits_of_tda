@@ -6,37 +6,28 @@ import java.util.Map;
 
 public class Account {
     private final int id;
-    private int balance = 0;
     private final Map<Integer, Integer> orders = new HashMap<Integer, Integer>();
+    private int balance = 0;
 
-    public Account(int id) {
+    Account(int id) {
         this.id = id;
     }
 
-    public int getBalance() {
-        return balance;
-    }
-
-    public int deposit(int creditAmount) {
+    void deposit(int creditAmount) {
         balance += creditAmount;
-        return balance;
     }
 
-    public void addOrder(int orderId, int amount) {
+    void addOrder(int orderId, int amount) {
         orders.put(orderId, amount);
     }
 
-    public Integer cancelOrder(int orderId) {
-        return orders.remove(orderId);
-    }
-
-    public void accumulateOrderQuantities(OrderQuantityAccumulator accumulator) {
+    void accumulateOrderQuantities(OrderQuantityAccumulator accumulator) {
         for (Integer orderQuantity : orders.values()) {
             accumulator.addOrderQuantity(orderQuantity);
         }
     }
 
-    public void fillOrders(int quantity, final OutboundEvents events, Iterator<Account> accountIterator) {
+    void fillOrders(int quantity, final OutboundEvents events, Iterator<Account> accountIterator) {
         final Iterator<Map.Entry<Integer,Integer>> iterator = orders.entrySet().iterator();
         int remainingFillQuantity = quantity;
         while (iterator.hasNext())
@@ -59,11 +50,40 @@ public class Account {
         fillNextAccount(events, accountIterator, remainingFillQuantity);
     }
 
-    public static void fillNextAccount(OutboundEvents events,
+    static void fillNextAccount(OutboundEvents events,
                                        Iterator<Account> accountIterator,
                                        int remainingFillQuantity) {
         if (accountIterator.hasNext()) {
             accountIterator.next().fillOrders(remainingFillQuantity, events, accountIterator);
         }
+    }
+
+    void placeOrder(OutboundEvents events, int accountId, int orderId, int amount, int priceOfBread) {
+        int cost = amount * priceOfBread;
+        if (balance >= cost) {
+            addOrder(orderId, amount);
+            deposit(-cost);
+            events.orderPlaced(accountId, amount);
+            events.newAccountBalance(accountId, balance);
+        } else {
+            events.orderRejected(accountId);
+        }
+    }
+
+    void deposit(OutboundEvents outboundEvents, int accountId, int creditAmount) {
+        deposit(creditAmount);
+        outboundEvents.newAccountBalance(accountId, balance);
+    }
+
+    void cancelOrder(int accountId, int orderId, OutboundEvents outboundEvents, int priceOfBread) {
+        Integer cancelledQuantity = orders.remove(orderId);
+        if (cancelledQuantity == null)
+        {
+            outboundEvents.orderNotFound(accountId, orderId);
+            return;
+        }
+
+        deposit(outboundEvents, accountId, cancelledQuantity * priceOfBread);
+        outboundEvents.orderCancelled(accountId, orderId);
     }
 }
