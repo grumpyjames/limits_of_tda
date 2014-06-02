@@ -4,14 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Account {
-    private final String accountName;
-
     private int balance = 0;
     private final Map<Integer, Integer> orders = new HashMap<Integer, Integer>();
-
-    public Account(String accountName) {
-        this.accountName = accountName;
-    }
 
     public int getBalance() {
         return balance;
