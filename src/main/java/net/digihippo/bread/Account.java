@@ -20,7 +20,18 @@ public class Account {
         orders.put(orderId, amount);
     }
 
-    public Integer cancelOrder(int orderId) {
-        return orders.remove(orderId);
+    public void cancelOrder(int accountId, int orderId, OutboundEvents events) {
+
+        Integer cancelledQuantity = orders.remove(orderId);
+
+        if (cancelledQuantity == null) {
+            events.orderNotFound(accountId, orderId);
+            return;
+        }
+
+        int newBalance = this.deposit(cancelledQuantity * BreadShop.PRICE_OF_BREAD);
+        events.orderCancelled(accountId, orderId);
+        events.newAccountBalance(accountId, newBalance);
+
     }
 }
