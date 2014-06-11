@@ -7,13 +7,9 @@ public class Account {
     private int balance = 0;
     private final Map<Integer, Integer> orders = new HashMap<Integer, Integer>();
 
-    public int getBalance() {
-        return balance;
-    }
-
-    public int deposit(int creditAmount) {
+    public void deposit(int creditAmount, int accountId, OutboundEvents events) {
         balance += creditAmount;
-        return balance;
+        events.newAccountBalance(accountId, balance);
     }
 
     public void addOrder(int orderId, int amount) {
@@ -29,9 +25,19 @@ public class Account {
             return;
         }
 
-        int newBalance = this.deposit(cancelledQuantity * BreadShop.PRICE_OF_BREAD);
+        this.deposit(cancelledQuantity * BreadShop.PRICE_OF_BREAD, accountId, events);
         events.orderCancelled(accountId, orderId);
-        events.newAccountBalance(accountId, newBalance);
+    }
+
+    public void placeOrder(int accountId, int orderId, int amount, OutboundEvents events) {
+        int cost = amount * BreadShop.PRICE_OF_BREAD;
+        if (balance >= cost) {
+            this.addOrder(orderId, amount);
+            this.deposit(-cost, accountId, events);
+            events.orderPlaced(accountId, amount);
+        } else {
+            events.orderRejected(accountId);
+        }
 
     }
 }
