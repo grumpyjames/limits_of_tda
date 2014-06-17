@@ -190,6 +190,19 @@ public class BreadShopTest {
     }
 
     @Test
+    public void fully_filled_orders_are_removed_and_therefore_cannot_be_cancelled()
+    {
+        int quantity = 40;
+        createAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
+
+        expectOrderFilled(accountIdOne, orderIdOne, quantity);
+        breadShop.onWholesaleOrder(quantity);
+
+        expectOrderNotFound(orderIdOne);
+        breadShop.cancelOrder(accountIdOne, orderIdOne);
+    }
+
+    @Test
     public void orders_do_not_overfill_across_two_wholesale_orders() {
         int quantity = 40;
         int wholesaleOrderQuantityOne = 21;
