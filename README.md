@@ -67,16 +67,18 @@ If you're feeling confident, however, you can head straight for B.
 
 If both of those seem pedestrian, help yourself to objective X.
 
+Remember to stay within the rules of TDA, whatever you do.
+
 ## Objective A : We can bake it for you wholesale
 
-Add a function to the `BreadShop` that behaves as follows:
+Implement the 'placeWholesaleOrder' function on the `BreadShop`.
+
+It behaves as follows:
 
 * Takes no arguments
 * Calls a new `placeWholesaleOrder` on `OutboundEvents` with an integer 
   amount that is equal to the `sum` of the quantities of the orders in
   all of the known accounts
-
-Remember to stay within the rules of TDA!
 
 ## Objective B : A wholesale order arrives
 
