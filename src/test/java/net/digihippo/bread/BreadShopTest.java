@@ -126,6 +126,18 @@ public class BreadShopTest {
     }
 
     @Test
+    public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders_in_one_account() {
+        expectWholesaleOrder(40 + 55);
+
+        int balance = cost(40 + 55);
+        createAccountWithBalance(accountIdOne, balance);
+        placeOrder(accountIdOne, orderIdOne, 40, balance);
+        placeOrder(accountIdOne, orderIdTwo, 55, balance - cost(40));
+
+        breadShop.placeWholesaleOrder();
+    }
+
+    @Test
     public void wholesale_orders_are_made_for_a_sum_of_the_quantities_of_outstanding_orders() {
         expectWholesaleOrder(40 + 55);
 
