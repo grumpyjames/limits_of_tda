@@ -45,9 +45,10 @@ N.B Currently, only primitive(ish) types are poked into
 OutboundEvents. There's nothing to stop us using real objects, but we
 might find it trickier to write tests if you do...
 
-## Objective 1
+## Part One: Warmup
 
-Make the internals (i.e all code in `src/main/java`) obey the TDA rule.
+Refactor the internals (i.e all code in `src/main/java`) such that
+they obey the TDA rule.
 
 Hints:
 
@@ -60,10 +61,11 @@ of their public methods must obey TDA.
 
 # Part Two: Choose your own adventure
 
-If you're still getting to grips with this idea, I recommend
-attempting A and then B. If you're feeling confident, head straight
-for B. If this pattern is already familiar to you, why not try your
-hand at Z?
+I recommend attempting objective A and then objective B.
+
+If you're feeling confident, however, you can head straight for B.
+
+If both of those seem pedestrian, help yourself to objective X.
 
 ## Objective A : We can bake it for you wholesale
 
@@ -77,11 +79,6 @@ Add a function to the `BreadShop` that behaves as follows:
 Remember to stay within the rules of TDA!
 
 ## Objective B : A wholesale order arrives
-
-This one is significantly trickier. You may wish to follow the spirit
-rather than the letter of the law (the letter would not allow you to
-pass non-TDA objects around; the spirit happily allows this so long as
-you don't attempt to use them to pass information back to the caller).
 
 Implement the `onWholesaleOrder` function on the `BreadShop`. This
 would be called when a wholesale order arrives. It takes a single
@@ -103,7 +100,17 @@ Attempting to fairly allocate the bread is outside of the scope of
 this task; in order to test it, however, allocation will need to be
 _consistent_.
 
-## Objective Z
+N.B This one is significantly trickier.
+
+You will almost certainly need to follow the spirit rather than the
+letter of the law. For example, the letter would not allow you to pass
+non-TDA objects around, but the spirit happily allows this so long as you
+don't attempt to use them to pass information back using that object.
+
+If you draw a blank here, perhaps try and implement a non-compliant
+solution and then refactor it to a more TDA world.
+
+## Objective X
 
 You might have a good idea of a story that would be hard to express
-within the TDA rules. Perhaps have a go at implementing it, if so.
+within the TDA rules. Specify and implement it.
