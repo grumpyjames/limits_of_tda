@@ -273,7 +273,7 @@ public class BreadShopTest {
     }
 
     private int cost(int quantityOne) {
-        return quantityOne * BreadShop.PRICE_OF_BREAD;
+        return quantityOne * 12;
     }
 
     private void expectOrderFilled(final int accountId, final int orderId, final int quantity) {
