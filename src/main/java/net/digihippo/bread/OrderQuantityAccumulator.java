@@ -8,6 +8,6 @@ public class OrderQuantityAccumulator {
     }
 
     public void placeWholesaleOrder(OutboundEvents events) {
-        events.onWholesaleOrder(accumulatedQuantity);
+        events.placeWholesaleOrder(accumulatedQuantity);
     }
 }

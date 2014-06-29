@@ -70,7 +70,7 @@ hand at Z?
 Add a function to the `BreadShop` that behaves as follows:
 
 * Takes no arguments
-* Calls a new `placeWholesaleOrder` on `OutboundEvents` with an integer 
+* Calls `placeWholesaleOrder` on `OutboundEvents` with an integer
   amount that is equal to the `sum` of the quantities of the orders in
   all of the known accounts
 
