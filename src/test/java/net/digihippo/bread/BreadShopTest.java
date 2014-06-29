@@ -358,7 +358,7 @@ public class BreadShopTest {
 
     private void expectWholesaleOrder(final int quantity) {
         mockery.checking(new Expectations() {{
-            oneOf(events).onWholesaleOrder(quantity);
+            oneOf(events).placeWholesaleOrder(quantity);
         }});
     }
 }

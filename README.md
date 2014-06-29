@@ -76,9 +76,11 @@ Implement the 'placeWholesaleOrder' function on the `BreadShop`.
 It behaves as follows:
 
 * Takes no arguments
-* Calls a new `placeWholesaleOrder` on `OutboundEvents` with an integer 
+* Calls `placeWholesaleOrder` on `OutboundEvents` with an integer 
   amount that is equal to the `sum` of the quantities of the orders in
   all of the known accounts
+
+Enable the appropriate tests (they are @Ignored with the message "Objective A") to help you develop and verify your implementation.
 
 ## Objective B : A wholesale order arrives
 
@@ -96,11 +98,12 @@ It should:
 
 It is perfectly valid for a wholesale order to arrive that does not
 fill every extant order completely, or, conversely, contains more
-bread than is required. In the former case,
+bread than is required. Attempting to fairly allocate the bread is
+outside of the scope of this task; in order to test it, however,
+allocation will need to be _consistent_.
 
-Attempting to fairly allocate the bread is outside of the scope of
-this task; in order to test it, however, allocation will need to be
-_consistent_.
+Enable the appropriate tests (they are @Ignored with the message
+"Objective B") to help you develop and verify your implementation.
 
 N.B This one is significantly trickier.
 

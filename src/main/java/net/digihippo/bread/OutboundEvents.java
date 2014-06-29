@@ -16,7 +16,7 @@ public interface OutboundEvents {
     void orderNotFound(int accountId, int orderId);
 
     // For Objective A
-    void onWholesaleOrder(int quantity);
+    void placeWholesaleOrder(int quantity);
 
     // For Objective B
     void orderFilled(int accountId, int orderId, int quantity);
