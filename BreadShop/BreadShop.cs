@@ -32,7 +32,7 @@ namespace BreadShop
                 int newBalance = account.Deposit(creditAmount);
                 events.NewAccountBalance(accountId, newBalance);
             }
-            catch (KeyNotFoundException knfe)
+            catch (KeyNotFoundException)
             {
                 events.AccountNotFound(accountId);
             }            
@@ -52,7 +52,7 @@ namespace BreadShop
                     events.OrderRejected(accountId);
                 }
             }
-            catch (KeyNotFoundException knfe)
+            catch (KeyNotFoundException)
             {
                 events.AccountNotFound(accountId);
             }
@@ -74,7 +74,7 @@ namespace BreadShop
                 events.OrderCancelled(accountId, orderId);
                 events.NewAccountBalance(accountId, newBalance);
             }
-            catch (KeyNotFoundException knfe)
+            catch (KeyNotFoundException)
             {
                 events.AccountNotFound(accountId);
             }
