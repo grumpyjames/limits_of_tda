@@ -52,10 +52,7 @@ namespace BreadShop
 
         public void VisitOrders(Action<int> orderQuantityAction)
         {
-            foreach(int orderQuantity in orderIdToOpenOrderQuantity.Values)
-            {
-                orderQuantityAction(orderQuantity);
-            }
+            orderQuantityAction(orderIdToOpenOrderQuantity.Values.Sum());            
         }
 
         private void DoPlaceOrder(int orderId, int amount, OutboundEvents events)
