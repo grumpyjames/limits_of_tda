@@ -125,8 +125,7 @@ namespace BreadShopTest
             mockEvents.Verify(events => events.NewAccountBalance(accountIdOne, balance - Cost(amount)));
         }
 
-        [TestMethod]
-        [Ignore] // tests Objective A
+        [TestMethod]        
         public void an_empty_shop_places_an_empty_wholesale_order() {
             breadShop.PlaceWholesaleOrder();
 
@@ -134,7 +133,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective A
         public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_in_one_account() {
             int balance = Cost(40 + 55);
             CreateAccountWithBalance(accountIdOne, balance);
@@ -145,8 +143,7 @@ namespace BreadShopTest
             mockEvents.Verify(events => events.PlaceWholesaleOrder(40 + 55));
         }
 
-        [TestMethod]
-        [Ignore] // tests Objective A
+        [TestMethod]        
         public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_across_accounts() {
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, 40);
             CreateAccountAndPlaceOrder(accountIdTwo, orderIdTwo, 55);

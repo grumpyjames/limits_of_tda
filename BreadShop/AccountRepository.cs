@@ -34,5 +34,13 @@ namespace BreadShop
                 events.AccountNotFound(accountId);
             }
         }
+
+        public void OnAccountsDo(Action<Account> action)
+        {
+            foreach (Account account in accounts.Values)
+            {
+                action(account);
+            }
+        }
     }
 }

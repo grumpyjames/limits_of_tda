@@ -38,11 +38,29 @@ namespace BreadShop
         }
 
         public void PlaceWholesaleOrder() {
-            throw new InvalidOperationException("Implement me in Objective A");
+            WholesaleOrderAccumulator accumulator = new WholesaleOrderAccumulator();
+            accountRepository.OnAccountsDo(account => account.VisitOrders(orderQty => accumulator.AddQuantity(orderQty)));
+
+            accumulator.PlaceOrder(events);
         }
 
         public void OnWholesaleOrder(int quantity) {
             throw new InvalidOperationException("Implement me in Objective B");
+        }
+
+        private class WholesaleOrderAccumulator
+        {
+            private int wholesaleOrderQuantity = 0;
+
+            public void AddQuantity(int orderQuantity)
+            {
+                wholesaleOrderQuantity += orderQuantity;
+            }
+
+            public void PlaceOrder(OutboundEvents events)
+            {
+                events.PlaceWholesaleOrder(wholesaleOrderQuantity);
+            }
         }
     }
 }

@@ -50,6 +50,14 @@ namespace BreadShop
             }            
         }
 
+        public void VisitOrders(Action<int> orderQuantityAction)
+        {
+            foreach(int orderQuantity in orderIdToOpenOrderQuantity.Values)
+            {
+                orderQuantityAction(orderQuantity);
+            }
+        }
+
         private void DoPlaceOrder(int orderId, int amount, OutboundEvents events)
         {
             orderIdToOpenOrderQuantity.Add(orderId, amount);
