@@ -11,73 +11,30 @@ namespace BreadShop
         private static int PRICE_OF_BREAD = 12;
 
         private readonly OutboundEvents events;
-        private readonly AccountRepository accountRepository = new AccountRepository();
+        private readonly AccountRepository accountRepository;
 
         public BreadShop(OutboundEvents outboundEvents)
         {
             this.events = outboundEvents;
+            this.accountRepository = new AccountRepository(outboundEvents);
         }
 
         public void CreateAccount(int id)
         {
-            Account newAccount = new Account();
-            accountRepository.AddAccount(id, newAccount);
-            events.AccountCreatedSuccessfully(id);
+            Account newAccount = new Account(id);
+            accountRepository.AddAccount(id, newAccount);            
         }
         
         public void Deposit(int accountId, int creditAmount) {
-            try
-            {
-                Account account = accountRepository.GetAccount(accountId);
-                int newBalance = account.Deposit(creditAmount);
-                events.NewAccountBalance(accountId, newBalance);
-            }
-            catch (KeyNotFoundException)
-            {
-                events.AccountNotFound(accountId);
-            }            
+            accountRepository.OnAccountDo(accountId, account => account.Deposit(creditAmount, events));            
         }
 
         public void PlaceOrder(int accountId, int orderId, int amount) {
-            try
-            { 
-                Account account = accountRepository.GetAccount(accountId);                
-                int cost = amount * PRICE_OF_BREAD;
-                if (account.GetBalance() >= cost) {
-                    account.AddOrder(orderId, amount);
-                    int newBalance = account.Deposit(-cost);
-                    events.OrderPlaced(accountId, amount);
-                    events.NewAccountBalance(accountId, newBalance);
-                } else {
-                    events.OrderRejected(accountId);
-                }
-            }
-            catch (KeyNotFoundException)
-            {
-                events.AccountNotFound(accountId);
-            }
+            accountRepository.OnAccountDo(accountId, account => account.PlaceOrder(orderId, amount, PRICE_OF_BREAD, events));            
         }
 
         public void CancelOrder(int accountId, int orderId) {
-            try
-            {
-                Account account = accountRepository.GetAccount(accountId);                
-
-                int cancelledQuantity = account.CancelOrder(orderId);
-                if (cancelledQuantity == -1)
-                {
-                    events.OrderNotFound(accountId, orderId);
-                    return;
-                }
-
-                int newBalance = account.Deposit(cancelledQuantity * PRICE_OF_BREAD);
-                events.OrderCancelled(accountId, orderId);
-                events.NewAccountBalance(accountId, newBalance);
-            }
-            catch (KeyNotFoundException)
-            {
-                events.AccountNotFound(accountId);
-            }
+            accountRepository.OnAccountDo(accountId, account => account.CancelOrder(orderId, PRICE_OF_BREAD, events));            
         }
 
         public void PlaceWholesaleOrder() {

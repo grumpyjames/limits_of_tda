@@ -9,35 +9,59 @@ namespace BreadShop
     public class Account
     {
         private int balance = 0;
-        private Dictionary<int, int> orderIdToOpenOrderQuantity = new Dictionary<int, int>();
+        private readonly int id;
+        private readonly Dictionary<int, int> orderIdToOpenOrderQuantity = new Dictionary<int, int>();
 
-        public int GetBalance()
+        public Account(int id)
         {
-            return balance;
+            this.id = id;
         }
-        
-        public int Deposit(int creditAmount)
+
+        public void Deposit(int creditAmount, OutboundEvents events)
         {
             balance += creditAmount;
-            return balance;
+            events.NewAccountBalance(id, balance);            
         }
 
-        public void AddOrder(int orderId, int amount) {
-            orderIdToOpenOrderQuantity.Add(orderId, amount);
-        }
-
-        public int CancelOrder(int orderId)
+        public void PlaceOrder(int orderId, int amount, int price, OutboundEvents events)
         {
-            if (orderIdToOpenOrderQuantity.ContainsKey(orderId))
+            int cost = price * amount;
+            if (balance >= cost)
             {
-                int cancelledQuantity = orderIdToOpenOrderQuantity[orderId];
-                orderIdToOpenOrderQuantity.Remove(orderId);
-                return cancelledQuantity;
+                DoPlaceOrder(orderId, amount, events);
+                Deposit(-cost, events);                                
             }
             else
             {
-                return -1;
+                events.OrderRejected(id);
+            }
+        }
+
+        public void CancelOrder(int orderId, int price, OutboundEvents events)
+        {
+            if (orderIdToOpenOrderQuantity.ContainsKey(orderId))
+            {
+                int cancelledQuantity = DoCancelOrder(orderId, events);
+                Deposit(cancelledQuantity * price, events);                
+            }
+            else
+            {
+                events.OrderNotFound(id, orderId);
             }            
+        }
+
+        private void DoPlaceOrder(int orderId, int amount, OutboundEvents events)
+        {
+            orderIdToOpenOrderQuantity.Add(orderId, amount);
+            events.OrderPlaced(id, amount);
+        }
+
+        private int DoCancelOrder(int orderId, OutboundEvents events)
+        {
+            int cancelledQuantity = orderIdToOpenOrderQuantity[orderId];
+            orderIdToOpenOrderQuantity.Remove(orderId);
+            events.OrderCancelled(id, orderId);
+            return cancelledQuantity;
         }
     }
 }
