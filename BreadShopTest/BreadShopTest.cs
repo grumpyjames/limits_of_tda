@@ -2,7 +2,7 @@
 
 namespace BreadShopTest
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;   
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
     using BreadShop;
@@ -25,39 +25,44 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        public void create_an_account() {            
+        public void create_an_account()
+        {
             breadShop.CreateAccount(accountIdOne);
             mockEvents.Verify(events => events.AccountCreatedSuccessfully(accountIdOne));
         }
 
         [TestMethod]
-        public void deposit_some_money() {
+        public void deposit_some_money()
+        {
             breadShop.CreateAccount(accountIdOne);
 
-            int depositAmount = 300;            
+            int depositAmount = 300;
             breadShop.Deposit(accountIdOne, depositAmount);
 
             mockEvents.Verify(events => events.NewAccountBalance(accountIdOne, depositAmount));
         }
 
         [TestMethod]
-        public void reject_deposits_for_nonexistent_accounts() {
-            int nonExistentAccountId = -5;            
+        public void reject_deposits_for_nonexistent_accounts()
+        {
+            int nonExistentAccountId = -5;
             breadShop.Deposit(nonExistentAccountId, 4000);
 
             mockEvents.Verify(events => events.AccountNotFound(nonExistentAccountId));
         }
 
         [TestMethod]
-        public void deposits_add_up() {
+        public void deposits_add_up()
+        {
             CreateAccountWithBalance(accountIdOne, 300);
-            
+
             breadShop.Deposit(accountIdOne, 300);
             mockEvents.Verify(events => events.NewAccountBalance(accountIdOne, 300 + 300));
         }
 
         [TestMethod]
-        public void place_an_order_succeeds_if_there_is_enough_money() {
+        public void place_an_order_succeeds_if_there_is_enough_money()
+        {
             CreateAccountWithBalance(accountIdOne, 500);
 
             breadShop.PlaceOrder(accountIdOne, orderIdOne, 40);
@@ -66,13 +71,15 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        public void cannot_place_order_for_nonexistent_account() {            
+        public void cannot_place_order_for_nonexistent_account()
+        {
             breadShop.PlaceOrder(-5, orderIdOne, 40);
             mockEvents.Verify(events => events.AccountNotFound(-5));
         }
 
         [TestMethod]
-        public void cannot_place_an_order_for_more_than_account_can_afford() {
+        public void cannot_place_an_order_for_more_than_account_can_afford()
+        {
             CreateAccountWithBalance(accountIdOne, 500);
 
             // 42 * 12 = 504            
@@ -81,7 +88,8 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        public void cancel_an_order_by_id() {
+        public void cancel_an_order_by_id()
+        {
             int balance = 500;
             CreateAccountWithBalance(accountIdOne, balance);
 
@@ -94,22 +102,25 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        public void cannot_cancel_an_order_for_nonexistent_account() {            
+        public void cannot_cancel_an_order_for_nonexistent_account()
+        {
             breadShop.CancelOrder(-5, orderIdOne);
 
             mockEvents.Verify(events => events.AccountNotFound(-5));
         }
 
         [TestMethod]
-        public void cannot_cancel_a_nonexistent_order() {
+        public void cannot_cancel_a_nonexistent_order()
+        {
             breadShop.CreateAccount(accountIdOne);
-            
+
             breadShop.CancelOrder(accountIdOne, -5);
             mockEvents.Verify(events => events.OrderNotFound(accountIdOne, -5));
         }
 
         [TestMethod]
-        public void cancelling_an_allows_balance_to_be_reused() {
+        public void cancelling_an_allows_balance_to_be_reused()
+        {
             int balance = 500;
             CreateAccountWithBalance(accountIdOne, balance);
 
@@ -127,7 +138,8 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective A
-        public void an_empty_shop_places_an_empty_wholesale_order() {
+        public void an_empty_shop_places_an_empty_wholesale_order()
+        {
             breadShop.PlaceWholesaleOrder();
 
             mockEvents.Verify(events => events.PlaceWholesaleOrder(0));
@@ -135,7 +147,8 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective A
-        public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_in_one_account() {
+        public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_in_one_account()
+        {
             int balance = Cost(40 + 55);
             CreateAccountWithBalance(accountIdOne, balance);
             breadShop.PlaceOrder(accountIdOne, orderIdOne, 40);
@@ -147,56 +160,61 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective A
-        public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_across_accounts() {
+        public void wholesale_orders_are_made_for_the_sum_of_the_quantities_of_outstanding_orders_across_accounts()
+        {
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, 40);
             CreateAccountAndPlaceOrder(accountIdTwo, orderIdTwo, 55);
 
             breadShop.PlaceWholesaleOrder();
-            mockEvents.Verify(events => events.PlaceWholesaleOrder(40 + 55));            
+            mockEvents.Verify(events => events.PlaceWholesaleOrder(40 + 55));
         }
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void arrival_of_wholesale_order_trigger_fills_of_a_single_outstanding_order() {
+        public void arrival_of_wholesale_order_trigger_fills_of_a_single_outstanding_order()
+        {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
             breadShop.OnWholesaleOrder(quantity);
-            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantity));            
+            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantity));
         }
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void wholesale_order_quantities_might_only_fill_an_outstanding_order_partially() {
+        public void wholesale_order_quantities_might_only_fill_an_outstanding_order_partially()
+        {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
 
-            int wholesaleOrderQuantity = quantity / 2;            
-            breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
-            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity));                        
-        }
-
-        [TestMethod]
-        [Ignore] // tests Objective B
-        public void an_order_can_be_filled_by_two_consecutive_wholesale_orders() {
-            int quantity = 40;
-            CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
-
-            int wholesaleOrderQuantity = quantity / 2;            
-            breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
-            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity));
-            
+            int wholesaleOrderQuantity = quantity / 2;
             breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity));
         }
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void orders_do_not_overfill() {
+        public void an_order_can_be_filled_by_two_consecutive_wholesale_orders()
+        {
+            int quantity = 40;
+            CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
+
+            int wholesaleOrderQuantity = quantity / 2;
+            breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
+            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity));
+
+            breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
+            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantity));
+        }
+
+        [TestMethod]
+        [Ignore] // tests Objective B
+        public void orders_do_not_overfill()
+        {
             int quantity = 40;
             int wholesaleOrderQuantity = 42;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
-            
+
             breadShop.OnWholesaleOrder(wholesaleOrderQuantity);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantity));
         }
@@ -207,21 +225,22 @@ namespace BreadShopTest
         {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
-            
+
             breadShop.OnWholesaleOrder(quantity);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantity));
-            
+
             breadShop.CancelOrder(accountIdOne, orderIdOne);
             mockEvents.Verify(events => events.OrderNotFound(accountIdOne, orderIdOne));
         }
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void orders_do_not_overfill_across_two_wholesale_orders() {
+        public void orders_do_not_overfill_across_two_wholesale_orders()
+        {
             int quantity = 40;
             int wholesaleOrderQuantityOne = 21;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
-            
+
             breadShop.OnWholesaleOrder(wholesaleOrderQuantityOne);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, wholesaleOrderQuantityOne));
 
@@ -232,12 +251,13 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void orders_across_different_accounts_are_filled() {
+        public void orders_across_different_accounts_are_filled()
+        {
             int quantityOne = 40;
             int quantityTwo = 55;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantityOne);
             CreateAccountAndPlaceOrder(accountIdTwo, orderIdTwo, quantityTwo);
-            
+
             breadShop.OnWholesaleOrder(quantityOne + quantityTwo);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantityOne));
             mockEvents.Verify(events => events.OrderFilled(accountIdTwo, orderIdTwo, quantityTwo));
@@ -245,14 +265,15 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void orders_fill_in_a_consistent_order_across_different_accounts() {
+        public void orders_fill_in_a_consistent_order_across_different_accounts()
+        {
             int quantityOne = 40;
             int quantityTwo = 55;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantityOne);
             CreateAccountAndPlaceOrder(accountIdTwo, orderIdTwo, quantityTwo);
 
-            
-            int secondFillQuantity = 8;            
+
+            int secondFillQuantity = 8;
             breadShop.OnWholesaleOrder(quantityOne + secondFillQuantity);
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantityOne));
             mockEvents.Verify(events => events.OrderFilled(accountIdTwo, orderIdTwo, secondFillQuantity));
@@ -260,18 +281,19 @@ namespace BreadShopTest
 
         [TestMethod]
         [Ignore] // tests Objective B
-        public void orders_fill_in_a_consistent_order_across_orders_in_the_same_account() {
+        public void orders_fill_in_a_consistent_order_across_orders_in_the_same_account()
+        {
             int quantityOne = 40;
             int quantityTwo = 50;
             int balance = Cost(quantityOne) + Cost(quantityTwo);
             CreateAccountWithBalance(accountIdOne, balance);
             breadShop.PlaceOrder(accountIdOne, orderIdOne, quantityOne);
             breadShop.PlaceOrder(accountIdOne, orderIdTwo, quantityTwo);
-            
+
             int secondFillQuantity = 8;
 
             breadShop.OnWholesaleOrder(quantityOne + secondFillQuantity);
-            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantityOne));            
+            mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdOne, quantityOne));
             mockEvents.Verify(events => events.OrderFilled(accountIdOne, orderIdTwo, secondFillQuantity));
         }
 

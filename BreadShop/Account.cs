@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BreadShop
-{    
+{
     public class Account
     {
         private int balance = 0;
@@ -15,14 +15,15 @@ namespace BreadShop
         {
             return balance;
         }
-        
+
         public int Deposit(int creditAmount)
         {
             balance += creditAmount;
             return balance;
         }
 
-        public void AddOrder(int orderId, int amount) {
+        public void AddOrder(int orderId, int amount)
+        {
             orderIdToOpenOrderQuantity.Add(orderId, amount);
         }
 
@@ -37,7 +38,7 @@ namespace BreadShop
             else
             {
                 return -1;
-            }            
+            }
         }
     }
 }

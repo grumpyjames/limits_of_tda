@@ -24,8 +24,9 @@ namespace BreadShop
             accountRepository.AddAccount(id, newAccount);
             events.AccountCreatedSuccessfully(id);
         }
-        
-        public void Deposit(int accountId, int creditAmount) {
+
+        public void Deposit(int accountId, int creditAmount)
+        {
             try
             {
                 Account account = accountRepository.GetAccount(accountId);
@@ -35,20 +36,24 @@ namespace BreadShop
             catch (KeyNotFoundException)
             {
                 events.AccountNotFound(accountId);
-            }            
+            }
         }
 
-        public void PlaceOrder(int accountId, int orderId, int amount) {
+        public void PlaceOrder(int accountId, int orderId, int amount)
+        {
             try
-            { 
-                Account account = accountRepository.GetAccount(accountId);                
+            {
+                Account account = accountRepository.GetAccount(accountId);
                 int cost = amount * PRICE_OF_BREAD;
-                if (account.GetBalance() >= cost) {
+                if (account.GetBalance() >= cost)
+                {
                     account.AddOrder(orderId, amount);
                     int newBalance = account.Deposit(-cost);
                     events.OrderPlaced(accountId, amount);
                     events.NewAccountBalance(accountId, newBalance);
-                } else {
+                }
+                else
+                {
                     events.OrderRejected(accountId);
                 }
             }
@@ -58,10 +63,11 @@ namespace BreadShop
             }
         }
 
-        public void CancelOrder(int accountId, int orderId) {
+        public void CancelOrder(int accountId, int orderId)
+        {
             try
             {
-                Account account = accountRepository.GetAccount(accountId);                
+                Account account = accountRepository.GetAccount(accountId);
 
                 int cancelledQuantity = account.CancelOrder(orderId);
                 if (cancelledQuantity == -1)
@@ -80,11 +86,13 @@ namespace BreadShop
             }
         }
 
-        public void PlaceWholesaleOrder() {
+        public void PlaceWholesaleOrder()
+        {
             throw new InvalidOperationException("Implement me in Objective A");
         }
 
-        public void OnWholesaleOrder(int quantity) {
+        public void OnWholesaleOrder(int quantity)
+        {
             throw new InvalidOperationException("Implement me in Objective B");
         }
     }

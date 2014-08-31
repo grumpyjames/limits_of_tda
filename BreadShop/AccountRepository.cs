@@ -8,7 +8,7 @@ namespace BreadShop
 {
     public class AccountRepository
     {
-        private readonly Dictionary<int, Account> accounts = new Dictionary<int,Account>();
+        private readonly Dictionary<int, Account> accounts = new Dictionary<int, Account>();
 
         public void AddAccount(int accountId, Account account)
         {
