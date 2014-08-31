@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BreadShop
-{    
+{
     public class Account
     {
         private int balance = 0;
@@ -20,7 +20,7 @@ namespace BreadShop
         public void Deposit(int creditAmount, OutboundEvents events)
         {
             balance += creditAmount;
-            events.NewAccountBalance(id, balance);            
+            events.NewAccountBalance(id, balance);
         }
 
         public void PlaceOrder(int orderId, int amount, int price, OutboundEvents events)
@@ -29,7 +29,7 @@ namespace BreadShop
             if (balance >= cost)
             {
                 DoPlaceOrder(orderId, amount, events);
-                Deposit(-cost, events);                                
+                Deposit(-cost, events);
             }
             else
             {
@@ -42,17 +42,17 @@ namespace BreadShop
             if (orderIdToOpenOrderQuantity.ContainsKey(orderId))
             {
                 int cancelledQuantity = DoCancelOrder(orderId, events);
-                Deposit(cancelledQuantity * price, events);                
+                Deposit(cancelledQuantity * price, events);
             }
             else
             {
                 events.OrderNotFound(id, orderId);
-            }            
+            }
         }
 
         public void VisitOrders(Action<int> orderQuantityAction)
         {
-            orderQuantityAction(orderIdToOpenOrderQuantity.Values.Sum());            
+            orderQuantityAction(orderIdToOpenOrderQuantity.Values.Sum());
         }
 
         private void DoPlaceOrder(int orderId, int amount, OutboundEvents events)
@@ -69,11 +69,11 @@ namespace BreadShop
             return cancelledQuantity;
         }
 
-        internal void FillOrders(int quantity, OutboundEvents events, IEnumerator<Account> remainingAccounts,            
+        internal void FillOrders(int quantity, OutboundEvents events, IEnumerator<Account> remainingAccounts,
                                  Action<int, IEnumerator<Account>, OutboundEvents> next)
         {
             int remainingQuantity = quantity;
-            Dictionary<int, int> remainingOrders = new Dictionary<int,int>();
+            Dictionary<int, int> remainingOrders = new Dictionary<int, int>();
             foreach (KeyValuePair<int, int> order in orderIdToOpenOrderQuantity)
             {
                 if (order.Value <= remainingQuantity)
@@ -85,7 +85,7 @@ namespace BreadShop
                 {
                     if (remainingQuantity != 0)
                     {
-                        events.OrderFilled(id, order.Key, remainingQuantity);                        
+                        events.OrderFilled(id, order.Key, remainingQuantity);
                         remainingOrders.Add(order.Key, order.Value - remainingQuantity);
                         remainingQuantity = 0;
                     }

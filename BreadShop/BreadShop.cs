@@ -22,29 +22,34 @@ namespace BreadShop
         public void CreateAccount(int id)
         {
             Account newAccount = new Account(id);
-            accountRepository.AddAccount(id, newAccount);            
-        }
-        
-        public void Deposit(int accountId, int creditAmount) {
-            accountRepository.OnAccountDo(accountId, account => account.Deposit(creditAmount, events));            
+            accountRepository.AddAccount(id, newAccount);
         }
 
-        public void PlaceOrder(int accountId, int orderId, int amount) {
-            accountRepository.OnAccountDo(accountId, account => account.PlaceOrder(orderId, amount, PRICE_OF_BREAD, events));            
+        public void Deposit(int accountId, int creditAmount)
+        {
+            accountRepository.OnAccountDo(accountId, account => account.Deposit(creditAmount, events));
         }
 
-        public void CancelOrder(int accountId, int orderId) {
-            accountRepository.OnAccountDo(accountId, account => account.CancelOrder(orderId, PRICE_OF_BREAD, events));            
+        public void PlaceOrder(int accountId, int orderId, int amount)
+        {
+            accountRepository.OnAccountDo(accountId, account => account.PlaceOrder(orderId, amount, PRICE_OF_BREAD, events));
         }
 
-        public void PlaceWholesaleOrder() {
+        public void CancelOrder(int accountId, int orderId)
+        {
+            accountRepository.OnAccountDo(accountId, account => account.CancelOrder(orderId, PRICE_OF_BREAD, events));
+        }
+
+        public void PlaceWholesaleOrder()
+        {
             WholesaleOrderAccumulator accumulator = new WholesaleOrderAccumulator();
             accountRepository.OnAccountsDo(account => account.VisitOrders(orderQty => accumulator.AddQuantity(orderQty)));
 
             accumulator.PlaceOrder(events);
         }
 
-        public void OnWholesaleOrder(int quantity) {
+        public void OnWholesaleOrder(int quantity)
+        {
             accountRepository.OnWholesaleOrder(quantity);
         }
 
