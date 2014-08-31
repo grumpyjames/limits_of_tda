@@ -42,7 +42,7 @@ all of `BreadShop`s public methods obey the rule, and the only
 information returned is through the `OutboundEvents` interface.
 
 N.B Currently, only primitive(ish) types are poked into
-OutboundEvents. There's nothing to stop us using real objects, but we
+`OutboundEvents`. There's nothing to stop us using real objects, but we
 might find it trickier to write tests if you do...
 
 ## Part Zero: Dire warnings
@@ -52,9 +52,9 @@ Before heading into this exercise, a few pieces of advice.
 * You shouldn't need to alter the tests, or, indeed, to add any more
 * While there are many other problems in the code, focus first on
   removing the TDA violations
-* If OutboundEvents looks a bit weird to you, don't worry:
+* If `OutboundEvents` looks a bit weird to you, don't worry:
   It might be helpful to imagine that in production, there would be an
-  implementation of OutboundEvents that sent serialized forms of those
+  implementation of `OutboundEvents` that sent serialized forms of those
   method invocations to other services (perhaps via a socket or a
   message queue).
 
