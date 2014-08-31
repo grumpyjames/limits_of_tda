@@ -23,7 +23,7 @@ Currently only the first four requirements have been met.
 
 While we are fundamentally interested in the success of the bread
 shop, we are also consultants, and we need some material for our new
-blog posts. As such, we have decided to adopt a new programming
+blog. As such, we have decided to adopt a new programming
 paradigm and explore the limits of tell don't ask.
 
 # Tell don't ask - a rather extreme definition
@@ -45,9 +45,22 @@ N.B Currently, only primitive(ish) types are poked into
 OutboundEvents. There's nothing to stop us using real objects, but we
 might find it trickier to write tests if you do...
 
+## Part Zero: Dire warnings
+
+Before heading into this exercise, a few pieces of advice.
+
+* You shouldn't need to alter the tests, or, indeed, to add any more
+* While there are many other problems in the code, focus first on
+  removing the TDA violations
+* If OutboundEvents looks a bit weird to you, don't worry:
+  It might be helpful to imagine that in production, there would be an
+  implementation of OutboundEvents that sent serialized forms of those
+  method invocations to other services (perhaps via a socket or a
+  message queue).
+
 ## Part One: Warmup
 
-Refactor the internals (i.e all code in `src/main/java`) such that
+Refactor the internals (i.e all code in the BreadShop project) such that
 they obey the TDA rule.
 
 Hints:
@@ -71,20 +84,20 @@ Remember to stay within the rules of TDA, whatever you do.
 
 ## Objective A : We can bake it for you wholesale
 
-Implement the 'placeWholesaleOrder' function on the `BreadShop`.
+Implement `PlaceWholesaleOrder` on the `BreadShop`.
 
 It behaves as follows:
 
 * Takes no arguments
-* Calls `placeWholesaleOrder` on `OutboundEvents` with an integer 
+* Calls `PlaceWholesaleOrder` on `OutboundEvents` with an integer 
   amount that is equal to the `sum` of the quantities of the orders in
   all of the known accounts
 
-Enable the appropriate tests (they are @Ignored with the message "Objective A") to help you develop and verify your implementation.
+Enable the appropriate tests (they are Ignored with the message "Objective A") to help you develop and verify your implementation.
 
 ## Objective B : A wholesale order arrives
 
-Implement the `onWholesaleOrder` function on the `BreadShop`. This
+Implement the `OnWholesaleOrder` function on the `BreadShop`. This
 would be called when a wholesale order arrives. It takes a single
 argument - the quantity of bread that has arrived.
 
@@ -92,7 +105,7 @@ It should:
 
 * Attempt to 'fill' as many orders as possible
 * For each order that is filled, a call to a new OutboundEvents function 
-  `onOrderFilled(int accountId, int orderId, int amount)` should be made
+  `OnOrderFilled(int accountId, int orderId, int amount)` should be made
 * Fully filled orders should be removed from the system (so if another 
   wholesale order arrived, they won't get filled twice)
 
@@ -102,7 +115,7 @@ bread than is required. Attempting to fairly allocate the bread is
 outside of the scope of this task; in order to test it, however,
 allocation will need to be _consistent_.
 
-Enable the appropriate tests (they are @Ignored with the message
+Enable the appropriate tests (they are Ignored with the message
 "Objective B") to help you develop and verify your implementation.
 
 N.B This one is significantly trickier.
