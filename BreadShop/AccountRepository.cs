@@ -42,5 +42,18 @@ namespace BreadShop
                 action(account);
             }
         }
+
+        public void OnWholesaleOrder(int quantity)
+        {
+            FillNextAccount(quantity, accounts.Values.AsEnumerable().GetEnumerator(), events);
+        }
+
+        private static void FillNextAccount(int quantity, IEnumerator<Account> accountEnumerator, OutboundEvents events)
+        {
+            if (accountEnumerator.MoveNext())
+            {
+                accountEnumerator.Current.FillOrders(quantity, events, accountEnumerator, FillNextAccount);
+            }
+        }
     }
 }

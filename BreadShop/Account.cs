@@ -10,7 +10,7 @@ namespace BreadShop
     {
         private int balance = 0;
         private readonly int id;
-        private readonly Dictionary<int, int> orderIdToOpenOrderQuantity = new Dictionary<int, int>();
+        private Dictionary<int, int> orderIdToOpenOrderQuantity = new Dictionary<int, int>();
 
         public Account(int id)
         {
@@ -67,6 +67,37 @@ namespace BreadShop
             orderIdToOpenOrderQuantity.Remove(orderId);
             events.OrderCancelled(id, orderId);
             return cancelledQuantity;
+        }
+
+        internal void FillOrders(int quantity, OutboundEvents events, IEnumerator<Account> remainingAccounts,            
+                                 Action<int, IEnumerator<Account>, OutboundEvents> next)
+        {
+            int remainingQuantity = quantity;
+            Dictionary<int, int> remainingOrders = new Dictionary<int,int>();
+            foreach (KeyValuePair<int, int> order in orderIdToOpenOrderQuantity)
+            {
+                if (order.Value <= remainingQuantity)
+                {
+                    events.OrderFilled(id, order.Key, order.Value);
+                    remainingQuantity -= order.Value;
+                }
+                else
+                {
+                    if (remainingQuantity != 0)
+                    {
+                        events.OrderFilled(id, order.Key, remainingQuantity);                        
+                        remainingOrders.Add(order.Key, order.Value - remainingQuantity);
+                        remainingQuantity = 0;
+                    }
+                    else
+                    {
+                        remainingOrders.Add(order.Key, order.Value);
+                    }
+                }
+            }
+
+            orderIdToOpenOrderQuantity = remainingOrders;
+            next(remainingQuantity, remainingAccounts, events);
         }
     }
 }

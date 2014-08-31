@@ -45,7 +45,7 @@ namespace BreadShop
         }
 
         public void OnWholesaleOrder(int quantity) {
-            throw new InvalidOperationException("Implement me in Objective B");
+            accountRepository.OnWholesaleOrder(quantity);
         }
 
         private class WholesaleOrderAccumulator

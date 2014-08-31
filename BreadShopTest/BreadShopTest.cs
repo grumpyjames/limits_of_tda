@@ -153,7 +153,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void arrival_of_wholesale_order_trigger_fills_of_a_single_outstanding_order() {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
@@ -163,7 +162,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void wholesale_order_quantities_might_only_fill_an_outstanding_order_partially() {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
@@ -174,7 +172,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void an_order_can_be_filled_by_two_consecutive_wholesale_orders() {
             int quantity = 40;
             CreateAccountAndPlaceOrder(accountIdOne, orderIdOne, quantity);
@@ -188,7 +185,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void orders_do_not_overfill() {
             int quantity = 40;
             int wholesaleOrderQuantity = 42;
@@ -199,7 +195,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void fully_filled_orders_are_removed_and_therefore_cannot_be_cancelled()
         {
             int quantity = 40;
@@ -213,7 +208,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void orders_do_not_overfill_across_two_wholesale_orders() {
             int quantity = 40;
             int wholesaleOrderQuantityOne = 21;
@@ -228,7 +222,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void orders_across_different_accounts_are_filled() {
             int quantityOne = 40;
             int quantityTwo = 55;
@@ -241,7 +234,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void orders_fill_in_a_consistent_order_across_different_accounts() {
             int quantityOne = 40;
             int quantityTwo = 55;
@@ -256,7 +248,6 @@ namespace BreadShopTest
         }
 
         [TestMethod]
-        [Ignore] // tests Objective B
         public void orders_fill_in_a_consistent_order_across_orders_in_the_same_account() {
             int quantityOne = 40;
             int quantityTwo = 50;
