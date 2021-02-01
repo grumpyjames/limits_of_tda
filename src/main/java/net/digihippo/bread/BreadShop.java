@@ -1,7 +1,7 @@
 package net.digihippo.bread;
 
 public class BreadShop {
-    private static int PRICE_OF_BREAD = 12;
+    private static final int PRICE_OF_BREAD = 12;
 
     private final OutboundEvents events;
     private final AccountRepository accountRepository = new AccountRepository();
