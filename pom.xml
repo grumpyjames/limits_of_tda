@@ -6,6 +6,18 @@
     <artifactId>limits_of_tda</artifactId>
     <version>1-SNAPSHOT</version>
     <url>https://github.com/grumpyjames/limits_of_tda</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <name>Limits of Tell, Don't Ask</name>
     <scm>
         <connection>scm:git:git://github.com/grumpyjames/limits_of_tda.git</connection>
