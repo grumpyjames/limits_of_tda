@@ -13,7 +13,30 @@ public class AccountRepository {
         accounts.put(id, newAccount);
     }
 
-    Account getAccount(int accountId) {
-        return accounts.get(accountId);
+    public void deposit(int accountId, int creditAmount, OutboundEvents events) {
+        if (!accounts.containsKey(accountId)) {
+            events.accountNotFound(accountId);
+            return;
+        }
+        accounts.get(accountId).deposit(creditAmount, accountId, events);
+    }
+
+    public void placeOrder(int accountId, int orderId, int amount, OutboundEvents events) {
+        if (!accounts.containsKey(accountId)) {
+            events.accountNotFound(accountId);
+            return;
+        }
+        Account account = accounts.get(accountId);
+        account.placeOrder(accountId, orderId, amount, events);
+    }
+
+    public void cancelOrder(int accountId, int orderId, OutboundEvents events) {
+        if (!accounts.containsKey(accountId)) {
+            events.accountNotFound(accountId);
+            return;
+        }
+
+        Account account = accounts.get(accountId);
+        account.cancelOrder(accountId, orderId, events);
     }
 }
